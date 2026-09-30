@@ -361,3 +361,39 @@
     }, 500);
 
 })();
+
+// ═══════════════════════════════════════════════════════════
+// إضافة الأزرار الجديدة بسرعة
+// ═══════════════════════════════════════════════════════════
+window.showSystemStatusWithSync = function() {
+    const clearBtn = document.querySelector('button[onclick*="clearConsoleOnly"]');
+    if (!clearBtn) {
+        alert('⚠️ افتح نافذة "حالة النظام" أولاً');
+        return;
+    }
+    
+    const btn1 = document.createElement('button');
+    btn1.className = 'btn btn-success btn-block';
+    btn1.style.marginTop = '6px';
+    btn1.innerHTML = '☁️ مزامنة الآن';
+    btn1.onclick = function() {
+        if (typeof syncToCloud === 'function') syncToCloud();
+        if (typeof closeModal === 'function') closeModal();
+    };
+    
+    const btn2 = document.createElement('button');
+    btn2.className = 'btn btn-warning btn-block';
+    btn2.style.marginTop = '6px';
+    btn2.innerHTML = '📥 تحميل من السحابة';
+    btn2.onclick = function() {
+        if (typeof downloadFromCloud === 'function') downloadFromCloud();
+        if (typeof closeModal === 'function') closeModal();
+    };
+    
+    clearBtn.parentNode.insertBefore(btn1, clearBtn.nextSibling);
+    clearBtn.parentNode.insertBefore(btn2, btn1.nextSibling);
+    
+    console.log('✅ تمت إضافة الأزرار');
+};
+
+console.log('✅ الكود جاهز - افتح نافذة حالة النظام ثم اكتب: showSystemStatusWithSync()');
