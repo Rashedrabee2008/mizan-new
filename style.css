@@ -1,5 +1,5 @@
 /* ============================================================
-   الميزان 15.0.0 - style.css
+   الميزان 16.0.0 - style.css
    ============================================================ */
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
@@ -39,27 +39,24 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 .top-header .header-text .sub-title { font-size: 9px !important; color: #A89070 !important; line-height: 1.1 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
 .top-header .header-actions { display: flex !important; align-items: center !important; gap: 4px !important; margin-right: auto !important; flex-wrap: nowrap !important; overflow: hidden !important; flex-shrink: 1 !important; }
 
-/* الساعة */
 .top-header .clock { display: inline-flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #0D0D0D, #1A1A1A) !important; border: 2px solid #C9A94E !important; border-radius: 10px !important; padding: 0 14px !important; color: #C9A94E !important; font-size: 13px !important; font-family: 'Courier New', monospace !important; direction: ltr !important; height: 36px !important; min-width: 190px !important; font-weight: 800 !important; white-space: nowrap !important; letter-spacing: 0.5px !important; box-shadow: 0 2px 8px rgba(201, 169, 78, 0.15) !important; flex-shrink: 0 !important; }
 .top-header .clock:hover { border-color: #E6A830 !important; }
 
-/* شارة المستخدم */
 .top-header .user-badge { display: inline-flex !important; align-items: center !important; gap: 4px !important; padding: 0 8px !important; background: #0D0D0D !important; border: 1.5px solid #C9A94E !important; border-radius: 8px !important; color: #C9A94E !important; font-size: 11px !important; font-weight: 800 !important; max-width: 85px !important; height: 32px !important; overflow: hidden !important; white-space: nowrap !important; flex-shrink: 0 !important; }
 .top-header .user-badge i { font-size: 14px !important; flex-shrink: 0 !important; }
 
-/* زر القفل */
 .top-header .lock-btn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #E06060 !important; border-radius: 8px !important; color: #E06060 !important; cursor: pointer !important; font-size: 14px !important; padding: 0 !important; flex-shrink: 0 !important; }
 .top-header .lock-btn:hover { background: #E06060 !important; color: #fff !important; }
 
-/* زر اللغة */
 #langToggleBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #3D3D3D !important; border-radius: 8px !important; color: #C9A94E !important; cursor: pointer !important; font-size: 11px !important; font-weight: 900 !important; padding: 0 !important; font-family: 'Tajawal', sans-serif !important; flex-shrink: 0 !important; }
 #langToggleBtn:hover { background: #C9A94E !important; color: #0D0D0D !important; }
 
-/* زر الوضع */
 #themeToggleBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #3D3D3D !important; border-radius: 8px !important; color: #C9A94E !important; cursor: pointer !important; font-size: 12px !important; padding: 0 !important; flex-shrink: 0 !important; }
 #themeToggleBtn:hover { background: #C9A94E !important; color: #0D0D0D !important; }
 
-/* شارة المزامنة */
+#manualSyncBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #4A8AB5 !important; border-radius: 8px !important; color: #4A8AB5 !important; cursor: pointer !important; font-size: 14px !important; padding: 0 !important; flex-shrink: 0 !important; }
+#manualSyncBtn:hover { background: #4A8AB5 !important; color: #fff !important; }
+
 #syncStatus { display: inline-flex !important; align-items: center !important; gap: 4px !important; background: #0D0D0D !important; border: 1.5px solid #3D3D3D !important; border-radius: 8px !important; padding: 0 10px !important; color: #A89070 !important; font-size: 10px !important; font-weight: 700 !important; height: 32px !important; white-space: nowrap !important; max-width: 130px !important; overflow: hidden !important; text-overflow: ellipsis !important; flex-shrink: 0 !important; }
 
 /* ═══════════════════════════════════════════════════════════
@@ -269,6 +266,69 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 .bottom-nav .nav-item.active i { color: #C9A94E !important; transform: translateY(-2px) !important; }
 
 /* ═══════════════════════════════════════════════════════════
+   🎨 قائمة المزيد - محسّنة للموبايل
+   ═══════════════════════════════════════════════════════════ */
+#moreMenu {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #1C1C1C, #0D0D0D);
+    border: 2px solid #C9A94E;
+    border-radius: 16px;
+    padding: 12px;
+    z-index: 100;
+    width: 94%;
+    max-width: 420px;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+}
+
+#moreMenu > div {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+}
+
+#moreMenu .more-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    background: #0D0D0D !important;
+    border: 1.5px solid #2D2D2D !important;
+    color: #F5E6C8 !important;
+    padding: 10px 6px !important;
+    border-radius: 10px !important;
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    min-height: 70px !important;
+    text-align: center !important;
+}
+
+#moreMenu .more-item:active {
+    transform: scale(0.95) !important;
+    background: #1A1A1A !important;
+    border-color: #C9A94E !important;
+}
+
+#moreMenu .more-item:hover {
+    background: #1A1A1A !important;
+    border-color: #C9A94E !important;
+}
+
+#moreMenu .more-item i {
+    font-size: 22px !important;
+    margin-bottom: 2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
    🔔 Toast
    ═══════════════════════════════════════════════════════════ */
 .toast { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(20px); background: #2D2D2D; color: #F5E6C8; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; max-width: 90%; text-align: center; }
@@ -340,13 +400,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 .report-buttons-grid .btn span { white-space: nowrap !important; font-weight: 800 !important; }
 
 /* ═══════════════════════════════════════════════════════════
-   🎨 قائمة المزيد
-   ═══════════════════════════════════════════════════════════ */
-#moreMenu .more-item { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 4px !important; background: #0D0D0D !important; border: 2px solid #2D2D2D !important; color: #F5E6C8 !important; padding: 12px 6px !important; border-radius: 10px !important; font-family: inherit !important; font-size: 11px !important; font-weight: 700 !important; cursor: pointer !important; transition: all 0.2s !important; min-height: 70px !important; }
-#moreMenu .more-item:hover { background: #1A1A1A !important; border-color: #C9A94E !important; transform: translateY(-2px) !important; }
-#moreMenu .more-item i { font-size: 20px !important; }
-
-/* ═══════════════════════════════════════════════════════════
    📱 Responsive - موبايل
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
@@ -385,10 +438,10 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     .bottom-nav .nav-item { min-width: 40px !important; padding: 3px 1px !important; }
     .bottom-nav .nav-item span { font-size: 9px !important; }
     .bottom-nav .nav-item i { font-size: 16px !important; }
-    #moreMenu { min-width: 92% !important; padding: 10px !important; }
+    #moreMenu { width: 94% !important; padding: 10px !important; max-height: 72vh !important; }
     #moreMenu > div { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
-    #moreMenu .more-item { padding: 10px 4px !important; font-size: 10px !important; min-height: 60px !important; }
-    #moreMenu .more-item i { font-size: 18px !important; }
+    #moreMenu .more-item { padding: 9px 4px !important; font-size: 10px !important; min-height: 65px !important; }
+    #moreMenu .more-item i { font-size: 20px !important; }
     .report-buttons-grid { grid-template-columns: 1fr 1fr 1fr !important; gap: 6px !important; }
     .report-buttons-grid .btn { min-height: 65px !important; font-size: 10px !important; padding: 10px 4px !important; }
     .report-buttons-grid .btn i { font-size: 18px !important; }
@@ -415,14 +468,16 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     .top-header .header-text h1 { font-size: 13px !important; }
     .top-header .header-text .sub-title { display: none !important; }
     .top-header .clock { display: inline-flex !important; font-size: 8px !important; padding: 0 4px !important; height: 26px !important; min-width: 110px !important; max-width: 120px !important; letter-spacing: -0.2px !important; }
-    .top-header .user-badge, .top-header .lock-btn, #themeToggleBtn, #langToggleBtn { width: 30px !important; min-width: 30px !important; height: 30px !important; font-size: 12px !important; }
+    .top-header .user-badge, .top-header .lock-btn, #themeToggleBtn, #langToggleBtn, #manualSyncBtn { width: 30px !important; min-width: 30px !important; height: 30px !important; font-size: 12px !important; }
     .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
     .dashboard-card { padding: 10px 6px !important; }
     .dashboard-card .number { font-size: 16px !important; }
     .dashboard-card .label { font-size: 10px !important; }
     .report-buttons-grid { grid-template-columns: 1fr 1fr !important; }
     .report-buttons-grid .btn:last-child { grid-column: span 2 !important; }
-    #moreMenu > div { grid-template-columns: 1fr !important; }
+    #moreMenu { width: 96% !important; padding: 10px !important; max-height: 75vh !important; }
+    #moreMenu .more-item { min-height: 60px !important; font-size: 10px !important; padding: 8px 4px !important; }
+    #moreMenu .more-item i { font-size: 18px !important; }
     #page-accounts .filter-chips { grid-template-columns: 1fr 1fr !important; }
     #accountList .table-header { display: none !important; }
     #accountList .table-row { grid-template-columns: 1fr !important; padding: 10px !important; }
@@ -464,7 +519,7 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     .top-header .header-text h1 { font-size: 20px !important; }
     .top-header .header-text .sub-title { font-size: 12px !important; }
     .top-header .clock { font-size: 14px !important; min-width: 210px !important; height: 40px !important; padding: 0 16px !important; }
-    .top-header .user-badge, .top-header .lock-btn, #themeToggleBtn, #langToggleBtn { height: 38px !important; width: 38px !important; font-size: 14px !important; }
+    .top-header .user-badge, .top-header .lock-btn, #themeToggleBtn, #langToggleBtn, #manualSyncBtn { height: 38px !important; width: 38px !important; font-size: 14px !important; }
     .top-header .user-badge { width: auto !important; padding: 0 12px !important; font-size: 13px !important; max-width: 150px !important; }
     .top-header .user-badge span { display: inline !important; }
     #syncStatus { display: inline-flex !important; height: 38px !important; font-size: 11px !important; max-width: 160px !important; }
@@ -473,10 +528,10 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     .dashboard-card .number { font-size: 22px !important; }
     .dashboard-card .label { font-size: 12px !important; }
     .form-row { grid-template-columns: 1fr 1fr !important; }
-    #moreMenu { min-width: 450px !important; }
-    #moreMenu > div { grid-template-columns: repeat(4, 1fr) !important; }
-    #moreMenu .more-item { padding: 14px 8px !important; font-size: 13px !important; }
-    #moreMenu .more-item i { font-size: 24px !important; }
+    #moreMenu { max-width: 520px !important; max-height: 80vh !important; }
+    #moreMenu > div { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+    #moreMenu .more-item { padding: 14px 8px !important; font-size: 13px !important; min-height: 85px !important; }
+    #moreMenu .more-item i { font-size: 26px !important; }
     .report-buttons-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; }
     .report-buttons-grid .btn { min-height: 80px !important; font-size: 14px !important; padding: 16px 12px !important; }
     .report-buttons-grid .btn i { font-size: 28px !important; }
@@ -521,10 +576,12 @@ body.light-mode .pos-items-box,
 body.light-mode .pos-meta-item,
 body.light-mode .cash-box-card,
 body.light-mode .performance-summary,
-body.light-mode .perf-card { background: #FFFFFF !important; border-color: #E0D5B8 !important; color: #1A1A1A !important; }
+body.light-mode .perf-card,
+body.light-mode #moreMenu { background: #FFFFFF !important; border-color: #E0D5B8 !important; color: #1A1A1A !important; }
 body.light-mode .table-row { background: #FFFFFF !important; color: #1A1A1A !important; border-color: #E0D5B8 !important; }
 body.light-mode input, body.light-mode select { background: #FFFFFF !important; color: #1A1A1A !important; border-color: #E0D5B8 !important; }
 body.light-mode .bottom-nav { background: #FFFFFF !important; border-color: #E0D5B8 !important; }
+body.light-mode #moreMenu .more-item { background: #F5F0E8 !important; color: #1A1A1A !important; border-color: #E0D5B8 !important; }
 
 /* ═══════════════════════════════════════════════════════════
    🖨️ الطباعة
@@ -535,7 +592,7 @@ body.light-mode .bottom-nav { background: #FFFFFF !important; border-color: #E0D
     #modalOverlay { position: absolute !important; top: 0 !important; background: #fff !important; padding: 10px !important; display: block !important; }
     .modal-box { background: #fff !important; border: none !important; padding: 0 !important; }
     .modal-close { display: none !important; }
-    .top-header, .bottom-nav { display: none !important; }
+    .top-header, .bottom-nav, #moreMenu { display: none !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════
