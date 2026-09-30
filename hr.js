@@ -16,6 +16,32 @@
     window.currentEmployeeTab = 'employees';
 
     // ═══════════════════════════════════════════════════════════
+    // دوال مساعدة
+    // ═══════════════════════════════════════════════════════════
+    function timeToMinutes(time24) {
+        if (!time24) return null;
+        const parts = String(time24).split(':');
+        if (parts.length !== 2) return null;
+        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    function time24To12(time24) {
+        if (!time24) return '';
+        const parts = String(time24).split(':');
+        if (parts.length !== 2) return '';
+        let hour = parseInt(parts[0]);
+        const minutes = parts[1];
+        const ampm = hour >= 12 ? 'م' : 'ص';
+        hour = hour % 12 || 12;
+        return hour + ':' + minutes + ' ' + ampm;
+    }
+
+    function getCurrentTime24() {
+        const now = new Date();
+        return String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    }
+
+    // ═══════════════════════════════════════════════════════════
     // تحميل البيانات
     // ═══════════════════════════════════════════════════════════
     window.loadHRData = function() {
@@ -36,6 +62,14 @@
     // ═══════════════════════════════════════════════════════════
     // إدارة الموظفين (CRUD)
     // ═══════════════════════════════════════════════════════════
+    window.updateSalaryLabel = function() {
+        const type = document.getElementById('empSalaryType') ? document.getElementById('empSalaryType').value : 'monthly';
+        const label = document.getElementById('salaryLabel');
+        if (label) {
+            label.textContent = type === 'monthly' ? 'الراتب الشهري *' : 'الراتب اليومي *';
+        }
+    };
+
     window.saveEmployee = function() {
         const id = $('empId') ? $('empId').value : '';
         const name = $('empName') ? $('empName').value.trim() : '';
@@ -93,6 +127,7 @@
         if ($('empHireDate')) $('empHireDate').value = getTodayDate();
         if ($('empFormTitle')) $('empFormTitle').textContent = '➕ إضافة موظف جديد';
         if ($('empSaveBtnText')) $('empSaveBtnText').textContent = 'إضافة';
+        window.updateSalaryLabel();
     };
 
     window.editEmployee = function(id) {
@@ -110,6 +145,7 @@
         if ($('empNotes')) $('empNotes').value = emp.notes || '';
         if ($('empFormTitle')) $('empFormTitle').textContent = '✏️ تعديل الموظف';
         if ($('empSaveBtnText')) $('empSaveBtnText').textContent = 'حفظ';
+        window.updateSalaryLabel();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -131,12 +167,12 @@
             c.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><span>لا يوجد موظفين</span></div>';
             return;
         }
-        let html = '<div class="table-header" style="grid-template-columns: 0.7fr 1.2fr 1fr 1fr 1.3fr;"><span>الكود</span><span>الاسم</span><span>الوظيفة</span><span>الراتب</span><span></span></div>';
+        let html = '<div class="table-header" style="grid-template-columns: 0.7fr 1.2fr 0.9fr 1fr 1.3fr;"><span>الكود</span><span>الاسم</span><span>الوظيفة</span><span>الراتب</span><span></span></div>';
         window.employees.forEach(function(emp) {
             const salaryText = emp.salaryType === 'monthly' 
                 ? window.formatMoney(emp.baseSalary) + ' ج.م/شهر' 
                 : window.formatMoney(emp.baseSalary) + ' ج.م/يوم';
-            html += '<div class="table-row" style="grid-template-columns: 0.7fr 1.2fr 1fr 1fr 1.3fr;">' +
+            html += '<div class="table-row" style="grid-template-columns: 0.7fr 1.2fr 0.9fr 1fr 1.3fr;">' +
                 '<span style="font-family:monospace;color:#C9A94E;font-size:11px;">' + emp.code + '</span>' +
                 '<span><strong>' + emp.name + '</strong>' +
                     (emp.phone ? '<br><small style="color:#A89070;font-size:9px;">📞 ' + emp.phone + '</small>' : '') +
@@ -161,12 +197,10 @@
         const emp = window.employees.find(function(e) { return e.id == id; });
         if (!emp) return;
 
-        // حساب إحصائيات
         const empAttendance = window.attendance.filter(function(a) { return a.employeeId == emp.id; });
         const empSalaries = window.salaries.filter(function(s) { return s.employeeId == emp.id; });
         const totalPaid = empSalaries.reduce(function(sum, s) { return sum + (s.netSalary || 0); }, 0);
         
-        // حساب آخر 30 يوم حضور
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const recentAttendance = empAttendance.filter(function(a) {
@@ -252,6 +286,8 @@
             return a.employeeId == emp.id && a.date === today;
         });
 
+        const currentTime24 = getCurrentTime24();
+
         let html = '<button class="modal-close" onclick="closeModal()">&times;</button>' +
             '<h3>⏰ تسجيل حضور - ' + emp.name + '</h3>' +
             
@@ -267,37 +303,108 @@
             '</div>';
 
         if (existing) {
-            // الموظف موجود بالفعل - يمكنه تسجيل الانصراف
-            html += '<div style="background:#2D8F5E20;border-radius:10px;padding:14px;margin-bottom:12px;border-right:4px solid #2D8F5E;">' +
-                '<div style="color:#2D8F5E;font-size:14px;font-weight:900;margin-bottom:8px;">✅ تم تسجيل الحضور اليوم</div>' +
-                '<div style="font-size:12px;color:#A89070;">' +
-                    'الحضور: ' + existing.checkIn + '<br>' +
-                    (existing.checkOut ? 'الانصراف: ' + existing.checkOut : 'لم يسجل الانصراف بعد') +
+            // ═══ قسم الحضور ═══
+            html += '<div style="background:#0D0D0D;border-radius:10px;padding:12px;margin-bottom:10px;border-right:4px solid #2D8F5E;">' +
+                '<div style="color:#2D8F5E;font-size:13px;font-weight:900;margin-bottom:10px;">🟢 تسجيل الحضور</div>' +
+                '<div class="form-row">' +
+                    '<div class="form-group" style="margin-bottom:0;">' +
+                        '<label style="font-size:10px;color:#A89070;">تعديل وقت الحضور</label>' +
+                        '<input type="time" id="checkInTime" value="' + (existing.checkIn24 || currentTime24) + '" style="padding:10px;font-size:15px;text-align:center;font-family:monospace;font-weight:900;background:#1A1A1A;color:#F5E6C8;border:2px solid #3D3D3D;border-radius:8px;width:100%;box-sizing:border-box;" />' +
+                    '</div>' +
+                    '<div class="form-group" style="margin-bottom:0;">' +
+                        '<label style="font-size:10px;color:#A89070;">الحالي</label>' +
+                        '<div style="padding:10px;background:#1A1A1A;border-radius:8px;text-align:center;color:#2D8F5E;font-weight:900;font-family:monospace;border:2px solid #2D8F5E;">' + existing.checkIn + '</div>' +
+                    '</div>' +
                 '</div>' +
+                '<button class="btn btn-warning btn-block" onclick="updateCheckIn(' + existing.id + ')" style="margin-top:10px;font-size:12px;">' +
+                    '✏️ تحديث وقت الحضور' +
+                '</button>' +
             '</div>';
 
-            if (!existing.checkOut) {
-                html += '<div class="form-group">' +
-                    '<label>ملاحظات الانصراف</label>' +
-                    '<input type="text" id="checkOutNotes" placeholder="اختياري" />' +
-                '</div>';
-                html += '<button class="btn btn-danger btn-block" onclick="checkOutEmployee(' + existing.id + ')">' +
-                    '<i class="fas fa-sign-out-alt"></i> تسجيل الانصراف الآن' +
+            // ═══ قسم الانصراف ═══
+            html += '<div style="background:#0D0D0D;border-radius:10px;padding:12px;margin-bottom:10px;border-right:4px solid #E06060;">' +
+                '<div style="color:#E06060;font-size:13px;font-weight:900;margin-bottom:10px;">🔴 تسجيل الانصراف</div>';
+
+            if (existing.checkOut) {
+                html += '<div class="form-row">' +
+                    '<div class="form-group" style="margin-bottom:0;">' +
+                        '<label style="font-size:10px;color:#A89070;">تعديل وقت الانصراف</label>' +
+                        '<input type="time" id="checkOutTime" value="' + (existing.checkOut24 || currentTime24) + '" style="padding:10px;font-size:15px;text-align:center;font-family:monospace;font-weight:900;background:#1A1A1A;color:#F5E6C8;border:2px solid #3D3D3D;border-radius:8px;width:100%;box-sizing:border-box;" />' +
+                    '</div>' +
+                    '<div class="form-group" style="margin-bottom:0;">' +
+                        '<label style="font-size:10px;color:#A89070;">الحالي</label>' +
+                        '<div style="padding:10px;background:#1A1A1A;border-radius:8px;text-align:center;color:#E06060;font-weight:900;font-family:monospace;border:2px solid #E06060;">' + existing.checkOut + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<button class="btn btn-warning btn-block" onclick="updateCheckOut(' + existing.id + ')" style="margin-top:10px;font-size:12px;">' +
+                    '✏️ تحديث وقت الانصراف' +
                 '</button>';
             } else {
-                html += '<div style="background:#4A8AB520;border-radius:10px;padding:14px;text-align:center;">' +
-                    '<div style="color:#4A8AB5;font-size:14px;font-weight:900;">🎉 انتهى اليوم</div>' +
-                '</div>';
+                html += '<div class="form-row">' +
+                    '<div class="form-group" style="margin-bottom:0;">' +
+                        '<label style="font-size:10px;color:#A89070;">وقت الانصراف</label>' +
+                        '<input type="time" id="checkOutTime" value="' + currentTime24 + '" style="padding:10px;font-size:15px;text-align:center;font-family:monospace;font-weight:900;background:#1A1A1A;color:#F5E6C8;border:2px solid #3D3D3D;border-radius:8px;width:100%;box-sizing:border-box;" />' +
+                    '</div>' +
+                    '<div class="form-group" style="margin-bottom:0;">' +
+                        '<label style="font-size:10px;color:#A89070;">أو استخدم</label>' +
+                        '<button class="btn btn-info btn-block" onclick="setCheckOutNow()" style="padding:10px;font-size:12px;">' +
+                            '⏰ الآن' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="form-group" style="margin-top:10px;">' +
+                    '<label style="font-size:10px;color:#A89070;">ملاحظات الانصراف</label>' +
+                    '<input type="text" id="checkOutNotes" placeholder="اختياري" style="padding:10px;" />' +
+                '</div>' +
+                '<button class="btn btn-danger btn-block" onclick="checkOutEmployee(' + existing.id + ')" style="margin-top:6px;">' +
+                    '🚪 تسجيل الانصراف' +
+                '</button>';
             }
-        } else {
-            // تسجيل حضور جديد
-            html += '<div class="form-group">' +
-                '<label>ملاحظات الحضور</label>' +
-                '<input type="text" id="checkInNotes" placeholder="اختياري" />' +
+            html += '</div>';
+
+            // ═══ ملخص اليوم ═══
+            html += '<div style="background:#1A1A1A;border-radius:10px;padding:12px;margin-bottom:10px;">' +
+                '<div style="color:#C9A94E;font-size:12px;font-weight:900;margin-bottom:10px;text-align:center;">📊 ملخص اليوم</div>' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+                    '<div style="text-align:center;">' +
+                        '<div style="color:#2D8F5E;font-size:11px;">🟢 حضور</div>' +
+                        '<div style="color:#F5E6C8;font-size:16px;font-weight:900;font-family:monospace;">' + existing.checkIn + '</div>' +
+                    '</div>' +
+                    '<div style="text-align:center;">' +
+                        '<div style="color:#E06060;font-size:11px;">🔴 انصراف</div>' +
+                        '<div style="color:' + (existing.checkOut ? '#F5E6C8' : '#E6A830') + ';font-size:16px;font-weight:900;font-family:monospace;">' + (existing.checkOut || '⏳ لم يسجل') + '</div>' +
+                    '</div>' +
+                '</div>' +
+                (existing.workHours ? '<div style="text-align:center;margin-top:10px;padding-top:10px;border-top:1px dashed #3D3D3D;">' +
+                    '<div style="color:#A89070;font-size:10px;">⏱️ ساعات العمل</div>' +
+                    '<div style="color:#C9A94E;font-size:22px;font-weight:900;font-family:monospace;">' + existing.workHours + ' ساعة</div>' +
+                '</div>' : '') +
             '</div>';
-            html += '<button class="btn btn-success btn-block" onclick="checkInEmployee(' + emp.id + ')">' +
-                '<i class="fas fa-sign-in-alt"></i> تسجيل الحضور الآن' +
+
+            // ═══ زر حذف ═══
+            html += '<button class="btn btn-danger btn-block" onclick="deleteAttendance(' + existing.id + ')" style="margin-bottom:6px;font-size:12px;">' +
+                '🗑️ حذف تسجيل اليوم' +
             '</button>';
+
+        } else {
+            // ═══ تسجيل حضور جديد ═══
+            html += '<div style="background:#0D0D0D;border-radius:10px;padding:14px;margin-bottom:12px;border-right:4px solid #2D8F5E;">' +
+                '<div style="color:#2D8F5E;font-size:13px;font-weight:900;margin-bottom:10px;">🟢 تسجيل حضور جديد</div>' +
+                '<div class="form-group">' +
+                    '<label style="font-size:11px;color:#A89070;">⏰ وقت الحضور</label>' +
+                    '<input type="time" id="checkInTime" value="' + currentTime24 + '" style="padding:12px;font-size:18px;text-align:center;font-family:monospace;font-weight:900;background:#1A1A1A;color:#F5E6C8;border:2px solid #2D8F5E;border-radius:8px;width:100%;box-sizing:border-box;" />' +
+                '</div>' +
+                '<div class="form-group">' +
+                    '<label style="font-size:11px;color:#A89070;">📝 ملاحظات</label>' +
+                    '<input type="text" id="checkInNotes" placeholder="اختياري" style="padding:10px;" />' +
+                '</div>' +
+                '<div style="background:#1A1A1A;border-radius:8px;padding:10px;text-align:center;font-size:11px;color:#A89070;margin-bottom:10px;">' +
+                    '💡 يمكنك تعديل الوقت قبل الحفظ' +
+                '</div>' +
+                '<button class="btn btn-success btn-block" onclick="checkInEmployee(' + emp.id + ')">' +
+                    '✅ تسجيل الحضور' +
+                '</button>' +
+            '</div>';
         }
 
         html += '<button class="btn btn-secondary btn-block" onclick="closeModal()" style="margin-top:6px;">إغلاق</button>';
@@ -305,20 +412,27 @@
         if (typeof openModal === 'function') openModal(html);
     };
 
+    // ═══════════════════════════════════════════════════════════
+    // تسجيل حضور جديد
+    // ═══════════════════════════════════════════════════════════
     window.checkInEmployee = function(employeeId) {
         const emp = window.employees.find(function(e) { return e.id == employeeId; });
         if (!emp) return;
 
         const today = getTodayDate();
         const notes = $('checkInNotes') ? $('checkInNotes').value.trim() : '';
+        const time24 = $('checkInTime') ? $('checkInTime').value : getCurrentTime24();
+        const displayTime = time24To12(time24);
 
         window.attendance.push({
             id: Date.now(),
             employeeId: emp.id,
             employeeName: emp.name,
             date: today,
-            checkIn: getNowTime(),
+            checkIn: displayTime,
+            checkIn24: time24,
             checkOut: null,
+            checkOut24: null,
             status: 'present',
             notes: notes,
             createdAt: new Date().toISOString()
@@ -327,46 +441,143 @@
         setData('attendance', window.attendance);
         if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
 
-        showToast('✅ تم تسجيل الحضور: ' + emp.name, 'success');
+        showToast('✅ تم تسجيل الحضور: ' + displayTime, 'success');
         closeModal();
+        setTimeout(function() {
+            if (typeof renderEmployees === 'function') renderEmployees();
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+        }, 300);
     };
 
+    // ═══════════════════════════════════════════════════════════
+    // تسجيل انصراف
+    // ═══════════════════════════════════════════════════════════
     window.checkOutEmployee = function(attendanceId) {
         const att = window.attendance.find(function(a) { return a.id == attendanceId; });
         if (!att) return;
 
         const notes = $('checkOutNotes') ? $('checkOutNotes').value.trim() : '';
+        const time24 = $('checkOutTime') ? $('checkOutTime').value : getCurrentTime24();
+        const displayTime = time24To12(time24);
 
-        att.checkOut = getNowTime();
+        att.checkOut = displayTime;
+        att.checkOut24 = time24;
         if (notes) att.notes = (att.notes ? att.notes + ' | ' : '') + notes;
 
         // حساب ساعات العمل
-        try {
-            const checkIn = parseTimeToMinutes(att.checkIn);
-            const checkOut = parseTimeToMinutes(att.checkOut);
-            att.workHours = ((checkOut - checkIn) / 60).toFixed(2);
-        } catch (e) {
-            att.workHours = 0;
+        const inMin = timeToMinutes(att.checkIn24);
+        const outMin = timeToMinutes(att.checkOut24);
+        if (inMin !== null && outMin !== null) {
+            let diff = outMin - inMin;
+            if (diff < 0) diff += 24 * 60;
+            att.workHours = (diff / 60).toFixed(2);
         }
 
         setData('attendance', window.attendance);
         if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
 
-        showToast('✅ تم تسجيل الانصراف: ' + att.employeeName, 'success');
+        showToast('✅ تم تسجيل الانصراف: ' + displayTime, 'success');
         closeModal();
+        setTimeout(function() {
+            if (typeof renderEmployees === 'function') renderEmployees();
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+        }, 300);
     };
 
-    function parseTimeToMinutes(timeStr) {
-        // "10:30 ص" → minutes
-        const parts = timeStr.match(/(\d+):(\d+)\s*(ص|م)/);
-        if (!parts) return 0;
-        let hours = parseInt(parts[1]);
-        const minutes = parseInt(parts[2]);
-        const period = parts[3];
-        if (period === 'م' && hours !== 12) hours += 12;
-        if (period === 'ص' && hours === 12) hours = 0;
-        return hours * 60 + minutes;
-    }
+    // ═══════════════════════════════════════════════════════════
+    // تحديث وقت الحضور
+    // ═══════════════════════════════════════════════════════════
+    window.updateCheckIn = function(attendanceId) {
+        const att = window.attendance.find(function(a) { return a.id == attendanceId; });
+        if (!att) return;
+
+        const time24 = $('checkInTime') ? $('checkInTime').value : '';
+        if (!time24) { showToast('⚠️ أدخل الوقت', 'error'); return; }
+
+        att.checkIn = time24To12(time24);
+        att.checkIn24 = time24;
+
+        // إعادة حساب ساعات العمل لو في انصراف
+        if (att.checkOut24) {
+            const inMin = timeToMinutes(att.checkIn24);
+            const outMin = timeToMinutes(att.checkOut24);
+            if (inMin !== null && outMin !== null) {
+                let diff = outMin - inMin;
+                if (diff < 0) diff += 24 * 60;
+                att.workHours = (diff / 60).toFixed(2);
+            }
+        }
+
+        setData('attendance', window.attendance);
+        if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
+
+        showToast('✅ تم تحديث وقت الحضور', 'success');
+        closeModal();
+        setTimeout(function() {
+            if (typeof renderEmployees === 'function') renderEmployees();
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+        }, 300);
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // تحديث وقت الانصراف
+    // ═══════════════════════════════════════════════════════════
+    window.updateCheckOut = function(attendanceId) {
+        const att = window.attendance.find(function(a) { return a.id == attendanceId; });
+        if (!att) return;
+
+        const time24 = $('checkOutTime') ? $('checkOutTime').value : '';
+        if (!time24) { showToast('⚠️ أدخل الوقت', 'error'); return; }
+
+        att.checkOut = time24To12(time24);
+        att.checkOut24 = time24;
+
+        // إعادة حساب ساعات العمل
+        const inMin = timeToMinutes(att.checkIn24);
+        const outMin = timeToMinutes(att.checkOut24);
+        if (inMin !== null && outMin !== null) {
+            let diff = outMin - inMin;
+            if (diff < 0) diff += 24 * 60;
+            att.workHours = (diff / 60).toFixed(2);
+        }
+
+        setData('attendance', window.attendance);
+        if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
+
+        showToast('✅ تم تحديث وقت الانصراف', 'success');
+        closeModal();
+        setTimeout(function() {
+            if (typeof renderEmployees === 'function') renderEmployees();
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+        }, 300);
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // تعيين الوقت الحالي للانصراف
+    // ═══════════════════════════════════════════════════════════
+    window.setCheckOutNow = function() {
+        const el = document.getElementById('checkOutTime');
+        if (el) el.value = getCurrentTime24();
+        if (typeof showToast === 'function') showToast('⏰ تم تعيين الوقت الحالي', 'info');
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // حذف تسجيل الحضور
+    // ═══════════════════════════════════════════════════════════
+    window.deleteAttendance = function(attendanceId) {
+        if (!confirm('⚠️ حذف تسجيل اليوم؟')) return;
+        
+        window.attendance = window.attendance.filter(function(a) { return a.id !== attendanceId; });
+        setData('attendance', window.attendance);
+        if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
+        
+        showToast('🗑️ تم الحذف', 'info');
+        closeModal();
+        setTimeout(function() {
+            if (typeof renderEmployees === 'function') renderEmployees();
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+        }, 300);
+    };
 
     // ═══════════════════════════════════════════════════════════
     // سجل الحضور
@@ -377,7 +588,7 @@
 
         const records = window.attendance.filter(function(a) { return a.employeeId == emp.id; })
             .sort(function(a, b) { return b.date.localeCompare(a.date); })
-            .slice(0, 30);
+            .slice(0, 60);
 
         let html = '<button class="modal-close" onclick="closeModal()">&times;</button>' +
             '<h3>📅 سجل حضور - ' + emp.name + '</h3>';
@@ -385,18 +596,35 @@
         if (records.length === 0) {
             html += '<div style="text-align:center;padding:40px;color:#5D5D5D;">لا يوجد سجل حضور</div>';
         } else {
+            // إحصائيات
+            const totalHours = records.reduce(function(sum, r) { return sum + parseFloat(r.workHours || 0); }, 0);
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">' +
+                '<div style="background:#0D0D0D;border-radius:10px;padding:12px;text-align:center;border-right:4px solid #2D8F5E;">' +
+                    '<div style="color:#A89070;font-size:11px;">📅 عدد الأيام</div>' +
+                    '<div style="color:#2D8F5E;font-size:20px;font-weight:900;">' + records.length + '</div>' +
+                '</div>' +
+                '<div style="background:#0D0D0D;border-radius:10px;padding:12px;text-align:center;border-right:4px solid #C9A94E;">' +
+                    '<div style="color:#A89070;font-size:11px;">⏱️ ساعات العمل</div>' +
+                    '<div style="color:#C9A94E;font-size:20px;font-weight:900;">' + totalHours.toFixed(1) + '</div>' +
+                '</div>' +
+            '</div>';
+
             html += '<div style="max-height:400px;overflow-y:auto;">';
             records.forEach(function(rec) {
-                html += '<div style="background:#0D0D0D;border-radius:8px;padding:10px;margin-bottom:6px;border-right:3px solid #2D8F5E;">' +
-                    '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-                        '<strong style="color:#C9A94E;font-size:12px;">' + rec.date + '</strong>' +
-                        (rec.workHours ? '<span style="color:#2D8F5E;font-size:11px;">⏱️ ' + rec.workHours + ' ساعة</span>' : '') +
+                html += '<div style="background:#0D0D0D;border-radius:8px;padding:10px;margin-bottom:6px;border-right:3px solid ' + (rec.checkOut ? '#2D8F5E' : '#E6A830') + ';">' +
+                    '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">' +
+                        '<strong style="color:#C9A94E;font-size:12px;">📅 ' + rec.date + '</strong>' +
+                        (rec.workHours ? '<span style="color:#2D8F5E;font-size:11px;font-weight:900;">⏱️ ' + rec.workHours + ' ساعة</span>' : '<span style="color:#E6A830;font-size:10px;">⏳ مفتوح</span>') +
                     '</div>' +
-                    '<div style="display:flex;gap:12px;font-size:11px;color:#A89070;">' +
-                        '<span>🟢 حضور: ' + rec.checkIn + '</span>' +
-                        (rec.checkOut ? '<span>🔴 انصراف: ' + rec.checkOut + '</span>' : '<span style="color:#E6A830;">⏳ لم يسجل</span>') +
+                    '<div style="display:flex;gap:12px;font-size:11px;color:#A89070;flex-wrap:wrap;">' +
+                        '<span>🟢 حضور: <strong style="color:#2D8F5E;">' + rec.checkIn + '</strong></span>' +
+                        (rec.checkOut ? '<span>🔴 انصراف: <strong style="color:#E06060;">' + rec.checkOut + '</strong></span>' : '<span style="color:#E6A830;">⏳ لم يسجل الانصراف</span>') +
                     '</div>' +
-                    (rec.notes ? '<div style="font-size:10px;color:#5D5D5D;margin-top:4px;">📝 ' + rec.notes + '</div>' : '') +
+                    (rec.notes ? '<div style="font-size:10px;color:#5D5D5D;margin-top:6px;padding-top:6px;border-top:1px dashed #2D2D2D;">📝 ' + rec.notes + '</div>' : '') +
+                    '<div style="display:flex;gap:4px;margin-top:8px;">' +
+                        '<button onclick="editAttendance(' + rec.id + ')" style="flex:1;background:#E6A830;border:none;color:#0D0D0D;border-radius:6px;padding:6px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;">✏️ تعديل</button>' +
+                        '<button onclick="deleteAttendanceFromList(' + rec.id + ')" style="flex:1;background:#E06060;border:none;color:#fff;border-radius:6px;padding:6px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;">🗑️ حذف</button>' +
+                    '</div>' +
                 '</div>';
             });
             html += '</div>';
@@ -404,6 +632,103 @@
 
         html += '<button class="btn btn-secondary btn-block" onclick="closeModal()" style="margin-top:12px;">إغلاق</button>';
         if (typeof openModal === 'function') openModal(html);
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // تعديل حضور قديم
+    // ═══════════════════════════════════════════════════════════
+    window.editAttendance = function(attendanceId) {
+        const att = window.attendance.find(function(a) { return a.id == attendanceId; });
+        if (!att) return;
+
+        const currentTime24 = getCurrentTime24();
+
+        let html = '<button class="modal-close" onclick="closeModal()">&times;</button>' +
+            '<h3>✏️ تعديل حضور - ' + att.employeeName + '</h3>' +
+            '<div style="background:#0D0D0D;border-radius:10px;padding:14px;margin-bottom:12px;text-align:center;">' +
+                '<div style="color:#A89070;font-size:11px;">📅 التاريخ</div>' +
+                '<div style="color:#C9A94E;font-size:18px;font-weight:900;">' + att.date + '</div>' +
+            '</div>' +
+
+            '<div class="form-group">' +
+                '<label style="font-size:11px;color:#A89070;">🟢 وقت الحضور</label>' +
+                '<input type="time" id="editCheckInTime" value="' + (att.checkIn24 || currentTime24) + '" style="padding:12px;font-size:16px;text-align:center;font-family:monospace;font-weight:900;background:#1A1A1A;color:#F5E6C8;border:2px solid #2D8F5E;border-radius:8px;width:100%;box-sizing:border-box;" />' +
+            '</div>' +
+
+            '<div class="form-group">' +
+                '<label style="font-size:11px;color:#A89070;">🔴 وقت الانصراف (اتركه فارغ إذا لم يسجل)</label>' +
+                '<input type="time" id="editCheckOutTime" value="' + (att.checkOut24 || '') + '" style="padding:12px;font-size:16px;text-align:center;font-family:monospace;font-weight:900;background:#1A1A1A;color:#F5E6C8;border:2px solid #E06060;border-radius:8px;width:100%;box-sizing:border-box;" />' +
+            '</div>' +
+
+            '<div class="form-group">' +
+                '<label style="font-size:11px;color:#A89070;">📝 ملاحظات</label>' +
+                '<input type="text" id="editAttendanceNotes" value="' + (att.notes || '') + '" placeholder="اختياري" />' +
+            '</div>' +
+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;">' +
+                '<button class="btn btn-success" onclick="saveAttendanceEdit(' + att.id + ')">' +
+                    '<i class="fas fa-save"></i> حفظ' +
+                '</button>' +
+                '<button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>' +
+            '</div>';
+
+        if (typeof openModal === 'function') openModal(html);
+    };
+
+    window.saveAttendanceEdit = function(attendanceId) {
+        const att = window.attendance.find(function(a) { return a.id == attendanceId; });
+        if (!att) return;
+
+        const checkIn24 = $('editCheckInTime') ? $('editCheckInTime').value : '';
+        const checkOut24 = $('editCheckOutTime') ? $('editCheckOutTime').value : '';
+        const notes = $('editAttendanceNotes') ? $('editAttendanceNotes').value.trim() : '';
+
+        if (!checkIn24) { showToast('⚠️ أدخل وقت الحضور', 'error'); return; }
+
+        att.checkIn = time24To12(checkIn24);
+        att.checkIn24 = checkIn24;
+        att.notes = notes;
+
+        if (checkOut24) {
+            att.checkOut = time24To12(checkOut24);
+            att.checkOut24 = checkOut24;
+
+            const inMin = timeToMinutes(checkIn24);
+            const outMin = timeToMinutes(checkOut24);
+            if (inMin !== null && outMin !== null) {
+                let diff = outMin - inMin;
+                if (diff < 0) diff += 24 * 60;
+                att.workHours = (diff / 60).toFixed(2);
+            }
+        } else {
+            att.checkOut = null;
+            att.checkOut24 = null;
+            att.workHours = null;
+        }
+
+        setData('attendance', window.attendance);
+        if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
+
+        showToast('✅ تم حفظ التعديلات', 'success');
+        closeModal();
+        setTimeout(function() {
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+            if (typeof renderEmployees === 'function') renderEmployees();
+        }, 300);
+    };
+
+    window.deleteAttendanceFromList = function(attendanceId) {
+        if (!confirm('⚠️ حذف هذا التسجيل؟')) return;
+        
+        window.attendance = window.attendance.filter(function(a) { return a.id !== attendanceId; });
+        setData('attendance', window.attendance);
+        if (typeof scheduleAutoSync === 'function') scheduleAutoSync();
+        
+        showToast('🗑️ تم الحذف', 'info');
+        setTimeout(function() {
+            if (typeof renderAttendanceList === 'function') renderAttendanceList();
+            if (typeof renderEmployees === 'function') renderEmployees();
+        }, 300);
     };
 
     // ═══════════════════════════════════════════════════════════
@@ -416,13 +741,11 @@
         const now = new Date();
         const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 
-        // حساب أيام العمل الفعلية في الشهر
         const monthAttendance = window.attendance.filter(function(a) {
             return a.employeeId == emp.id && (a.date || '').startsWith(currentMonth);
         });
         const daysWorked = monthAttendance.filter(function(a) { return a.status === 'present'; }).length;
         
-        // حساب الراتب
         let baseAmount = emp.baseSalary;
         if (emp.salaryType === 'daily') {
             baseAmount = emp.baseSalary * daysWorked;
@@ -486,7 +809,6 @@
 
         if (typeof openModal === 'function') openModal(html);
 
-        // تعبئة الخزائن
         setTimeout(function() {
             const sel = document.getElementById('salCashBox');
             if (!sel) return;
@@ -495,7 +817,6 @@
                 opts += '<option value="' + box.id + '">' + (box.icon || '') + ' ' + box.name + (box.isDefault ? ' ⭐' : '') + '</option>';
             });
             sel.innerHTML = opts;
-            // اختيار الافتراضية
             if (typeof getDefaultCashBox === 'function') {
                 const def = getDefaultCashBox();
                 if (def) sel.value = def.id;
@@ -531,7 +852,6 @@
 
         const box = typeof getCashBoxById === 'function' ? getCashBoxById(cashBoxId) : null;
 
-        // حفظ الراتب
         const salary = {
             id: Date.now(),
             employeeId: emp.id,
@@ -552,7 +872,6 @@
         };
         window.salaries.push(salary);
 
-        // إضافة حركة خزنة
         window.treasury.push({
             id: Date.now() + 1,
             type: 'withdraw',
@@ -569,7 +888,6 @@
         setData('salaries', window.salaries);
         setData('treasury', window.treasury);
 
-        // قيد محاسبي
         try {
             if (typeof window.getAccountByCode === 'function' && typeof window.createJournalEntry === 'function') {
                 const cashAccount = window.getAccountByCode('1110');
@@ -593,6 +911,7 @@
         if (typeof renderTreasury === 'function') renderTreasury();
         if (typeof renderCashBoxes === 'function') renderCashBoxes();
         if (typeof updateDashboard === 'function') updateDashboard();
+        if (typeof renderSalariesList === 'function') renderSalariesList();
     };
 
     window.showSalaryHistory = function(employeeId) {
@@ -674,13 +993,14 @@
             return;
         }
 
-        let html = '<div class="table-header" style="grid-template-columns: 1fr 1fr 1fr 0.8fr;"><span>الموظف</span><span>الحضور</span><span>الانصراف</span><span>ساعات</span></div>';
+        let html = '<div class="table-header" style="grid-template-columns: 1fr 0.9fr 0.9fr 0.8fr 0.7fr;"><span>الموظف</span><span>الحضور</span><span>الانصراف</span><span>ساعات</span><span></span></div>';
         records.forEach(function(rec) {
-            html += '<div class="table-row" style="grid-template-columns: 1fr 1fr 1fr 0.8fr;">' +
+            html += '<div class="table-row" style="grid-template-columns: 1fr 0.9fr 0.9fr 0.8fr 0.7fr;">' +
                 '<span><strong>' + rec.employeeName + '</strong><br><small style="color:#A89070;font-size:9px;">' + rec.date + '</small></span>' +
                 '<span style="color:#2D8F5E;font-size:11px;">' + rec.checkIn + '</span>' +
                 '<span style="color:' + (rec.checkOut ? '#E06060' : '#E6A830') + ';font-size:11px;">' + (rec.checkOut || '⏳') + '</span>' +
                 '<span style="color:#4A8AB5;font-size:11px;">' + (rec.workHours || '-') + '</span>' +
+                '<button class="btn btn-warning btn-sm" onclick="editAttendance(' + rec.id + ')"><i class="fas fa-edit"></i></button>' +
             '</div>';
         });
         c.innerHTML = html;
