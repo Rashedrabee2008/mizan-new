@@ -265,17 +265,11 @@
     // ═══════════════════════════════════════════════════════════
     // مسح Console فقط
     // ═══════════════════════════════════════════════════════════
-    '<button class="btn btn-info btn-block" onclick="clearConsoleOnly()" style="margin-bottom:6px;">' +
-    '🧹 مسح Console فقط' +
-'</button>' +
-
-'<button class="btn btn-success btn-block" onclick="syncToCloud(); closeModal();" style="margin-bottom:6px;">' +
-    '☁️ مزامنة الآن' +
-'</button>' +
-
-'<button class="btn btn-warning btn-block" onclick="downloadFromCloud(); closeModal();" style="margin-bottom:6px;">' +
-    '📥 تحميل من السحابة' +
-'</button>' +
+    window.clearConsoleOnly = function() {
+        console.clear();
+        originalLog.call(console, '🧹 تم مسح Console');
+        if (typeof showToast === 'function') showToast('🧹 تم مسح Console', 'success');
+    };
 
     // ═══════════════════════════════════════════════════════════
     // إضافة زر ☁️ في الهيدر (لو مش موجود)
