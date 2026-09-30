@@ -1,8 +1,8 @@
 // ============================================================
-// الميزان 16.0.0 - app.js (النسخة الكاملة)
+// الميزان 16.2.0 - app.js (النسخة الكاملة النهائية)
 // ============================================================
 
-console.log('🚀 تحميل app.js v16.0.0');
+console.log('🚀 تحميل app.js v16.2.0');
 
 // ═══════════════════════════════════════════════════════════
 // Firebase Configuration
@@ -36,6 +36,7 @@ window.returns = [];
 window.users = [];
 window.accounts = [];
 window.journalEntries = [];
+window.coupons = [];
 window.currentSaleItems = [];
 window.currentPurItems = [];
 window.currentRetItems = [];
@@ -45,13 +46,16 @@ window.currentPayTab = 'collect';
 window.currentUser = null;
 window.currentReport = 'daily';
 window.currentReportData = null;
+window.currentCoupon = null;
+window.currentPointsToRedeem = 0;
+window.currentCustomerName = '';
 window.companyData = { name: 'الميزان', phone: '', address: '', tax: '', footer: 'شكراً لتعاملكم معنا 🌟' };
 window.vatSettings = { defaultVAT: 14 };
 window.autoSyncInterval = null;
 window.autoSyncDebounce = null;
 
 // ═══════════════════════════════════════════════════════════
-// أدوات مساعدة (يتم تعريفها في fixes.js أيضاً - هذا احتياطي)
+// أدوات مساعدة (احتياطي - fixes.js يعرفها)
 // ═══════════════════════════════════════════════════════════
 if (typeof window.$ !== 'function') {
     window.$ = function(id) { return document.getElementById(id); };
@@ -279,11 +283,11 @@ window.syncToCloud = function() {
         customers: customers, suppliers: suppliers, cashBoxes: cashBoxes,
         expenses: expenses, treasury: treasury, payments: payments,
         returns: returns, users: users, accounts: accounts,
-        journalEntries: journalEntries, companyData: companyData,
-        vatSettings: vatSettings,
+        journalEntries: journalEntries, coupons: coupons,
+        companyData: companyData, vatSettings: vatSettings,
         lastSync: new Date().toISOString(),
         syncedBy: currentUser ? currentUser.name : 'unknown',
-        version: '16.0.0'
+        version: '16.2.0'
     };
 
     function cleanForFirebase(obj) {
@@ -343,6 +347,7 @@ window.syncFromCloud = function(silent) {
         if (data.users) window.users = toArray(data.users);
         if (data.accounts) window.accounts = toArray(data.accounts);
         if (data.journalEntries) window.journalEntries = toArray(data.journalEntries);
+        if (data.coupons) window.coupons = toArray(data.coupons);
         if (data.companyData) window.companyData = data.companyData;
         if (data.vatSettings) window.vatSettings = data.vatSettings;
         saveAll();
@@ -373,15 +378,6 @@ window.syncUsersFromCloud = function() {
     }).catch(function() {});
 };
 
-window.updateSyncStatus = function(msg, type) {
-    type = type || 'info';
-    let statusEl = $('syncStatus');
-    if (!statusEl) return;
-    statusEl.textContent = msg;
-    const colors = { 'success': '#2D8F5E', 'error': '#E06060', 'info': '#C9A94E', 'warning': '#E6A830' };
-    statusEl.style.color = colors[type] || '#A89070';
-};
-
 window.startAutoSync = function() {
     if (autoSyncInterval) clearInterval(autoSyncInterval);
     autoSyncInterval = setInterval(function() {
@@ -403,46 +399,6 @@ window.scheduleAutoSync = function() {
     if (!firebaseReady || !currentUser) return;
     if (autoSyncDebounce) clearTimeout(autoSyncDebounce);
     autoSyncDebounce = setTimeout(function() { syncToCloud(); }, 10000);
-};
-
-window.showCloudStatus = function() {
-    let html = '<button class="modal-close" onclick="closeModal()">&times;</button>' +
-        '<h3>☁️ حالة السحابة</h3>' +
-        '<div style="background:#0D0D0D;border-radius:10px;padding:14px;">' +
-            '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2D2D2D;">' +
-                '<span style="color:#A89070;">الاتصال:</span>' +
-                '<strong style="color:' + (window.firebaseReady ? '#2D8F5E' : '#E06060') + ';">' + 
-                    (window.firebaseReady ? '✅ متصل' : '❌ غير متصل') + 
-                '</strong>' +
-            '</div>' +
-            '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2D2D2D;">' +
-                '<span style="color:#A89070;">المستخدم:</span>' +
-                '<strong style="color:#C9A94E;">' + 
-                    (window.currentUser ? window.currentUser.name : 'غير مسجل') + 
-                '</strong>' +
-            '</div>' +
-            '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2D2D2D;">' +
-                '<span style="color:#A89070;">المنتجات:</span>' +
-                '<strong style="color:#F5E6C8;">' + (window.products || []).length + '</strong>' +
-            '</div>' +
-            '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #2D2D2D;">' +
-                '<span style="color:#A89070;">الفواتير:</span>' +
-                '<strong style="color:#F5E6C8;">' + (window.sales || []).length + '</strong>' +
-            '</div>' +
-            '<div style="display:flex;justify-content:space-between;padding:8px 0;">' +
-                '<span style="color:#A89070;">آخر مزامنة:</span>' +
-                '<strong style="color:#4A8AB5;font-size:11px;">' + 
-                    (localStorage.getItem('mizan_last_sync') || 'لم تتم') + 
-                '</strong>' +
-            '</div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;">' +
-            '<button class="btn btn-success" onclick="syncToCloud(); closeModal();"><i class="fas fa-cloud-upload-alt"></i> رفع للسحابة</button>' +
-            '<button class="btn btn-info" onclick="downloadFromCloud(); closeModal();"><i class="fas fa-cloud-download-alt"></i> تحميل من السحابة</button>' +
-        '</div>' +
-        '<button class="btn btn-secondary btn-block" onclick="closeModal()" style="margin-top:6px;">إغلاق</button>';
-    
-    if (typeof openModal === 'function') openModal(html);
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -550,7 +506,6 @@ window.navigateTo = function(page) {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-
 // ═══════════════════════════════════════════════════════════
 // المنتجات
 // ═══════════════════════════════════════════════════════════
@@ -696,6 +651,7 @@ window.showProductWarehouses = function(productId) {
     
     if (typeof openModal === 'function') openModal(html);
 };
+
 // ═══════════════════════════════════════════════════════════
 // العملاء
 // ═══════════════════════════════════════════════════════════
@@ -777,16 +733,21 @@ window.renderCustomers = function() {
         c.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><span>لا يوجد عملاء</span></div>';
         return;
     }
-    let html = '<div class="table-header" style="grid-template-columns: 1.3fr 1fr 1fr 1.5fr;"><span>الاسم</span><span>الهاتف</span><span>المديونية</span><span></span></div>';
+    let html = '<div class="table-header" style="grid-template-columns: 1.3fr 1fr 0.8fr 1fr 1.5fr;"><span>الاسم</span><span>الهاتف</span><span>النقاط</span><span>المديونية</span><span></span></div>';
     filtered.forEach(function(cu) {
         const balance = getCustomerBalance(cu.name);
-        html += '<div class="table-row" style="grid-template-columns: 1.3fr 1fr 1fr 1.5fr;">' +
-            '<span><strong>' + cu.name + '</strong>' +
+        const points = typeof getCustomerPoints === 'function' ? getCustomerPoints(cu.name) : 0;
+        const level = typeof getCustomerLevel === 'function' ? getCustomerLevel(cu.name) : { icon: '🥉' };
+        
+        html += '<div class="table-row" style="grid-template-columns: 1.3fr 1fr 0.8fr 1fr 1.5fr;">' +
+            '<span><strong>' + level.icon + ' ' + cu.name + '</strong>' +
                 (cu.address ? '<br><small style="color:#A89070;font-size:9px;">📍 ' + cu.address + '</small>' : '') +
             '</span>' +
             '<span style="font-size:11px;color:#A89070;">' + (cu.phone || '-') + '</span>' +
+            '<span style="color:#C9A94E;font-weight:900;">⭐ ' + points + '</span>' +
             '<span style="color:' + (balance > 0 ? '#E06060' : '#2D8F5E') + ';font-weight:900;">' + formatMoney(balance) + '</span>' +
             '<div style="display:flex;gap:4px;justify-content:flex-end;">' +
+                '<button class="btn btn-success btn-sm" onclick="showCustomerLoyalty(\'' + cu.name + '\')" title="النقاط"><i class="fas fa-star"></i></button>' +
                 '<button class="btn btn-warning btn-sm" onclick="editCustomer(' + cu.id + ')"><i class="fas fa-edit"></i></button>' +
                 '<button class="btn btn-danger btn-sm" onclick="deleteCustomer(' + cu.id + ')"><i class="fas fa-trash"></i></button>' +
             '</div>' +
@@ -1215,6 +1176,9 @@ window.renderCashier = function() {
     if (tb) tb.style.display = 'block';
 };
 
+// ═══════════════════════════════════════════════════════════
+// updateSaleTotals - النسخة النهائية مع الكوبون والنقاط
+// ═══════════════════════════════════════════════════════════
 window.updateSaleTotals = function() {
     const subtotal = currentSaleItems.reduce(function(s, i) { return s + i.total; }, 0);
     const totalQty = currentSaleItems.reduce(function(s, i) { return s + i.qty; }, 0);
@@ -1222,6 +1186,7 @@ window.updateSaleTotals = function() {
     const isTax = invoiceType === 'tax';
     const vat = isTax ? (subtotal * (vatSettings.defaultVAT / 100)) : 0;
 
+    // الخصم العادي
     const discountValue = parseFloat($('saleDiscount') ? $('saleDiscount').value : 0) || 0;
     const discountType = $('saleDiscountType') ? $('saleDiscountType').value : 'fixed';
     let discount = 0;
@@ -1231,6 +1196,7 @@ window.updateSaleTotals = function() {
         discount = discountValue;
     }
 
+    // خصم المستوى
     const levelDiscountValue = parseFloat($('saleLevelDiscount') ? $('saleLevelDiscount').value : 0) || 0;
     const levelDiscountType = $('saleLevelDiscountType') ? $('saleLevelDiscountType').value : 'fixed';
     let levelDiscount = 0;
@@ -1240,7 +1206,22 @@ window.updateSaleTotals = function() {
         levelDiscount = levelDiscountValue;
     }
 
-    const grandTotal = Math.max(0, subtotal + vat - discount - levelDiscount);
+    // ✅ خصم الكوبون
+    let couponDiscount = 0;
+    if (window.currentCoupon && typeof window.validateCoupon === 'function') {
+        const validation = window.validateCoupon(window.currentCoupon, subtotal);
+        if (validation.valid) {
+            couponDiscount = validation.discount;
+        }
+    }
+
+    // ✅ خصم النقاط
+    let pointsDiscount = 0;
+    if (window.currentPointsToRedeem > 0 && window.LOYALTY_CONFIG) {
+        pointsDiscount = window.currentPointsToRedeem * window.LOYALTY_CONFIG.POINT_VALUE;
+    }
+
+    const grandTotal = Math.max(0, subtotal + vat - discount - levelDiscount - couponDiscount - pointsDiscount);
 
     if ($('statItemsCount')) $('statItemsCount').textContent = currentSaleItems.length;
     if ($('statTotalQty')) $('statTotalQty').textContent = totalQty;
@@ -1261,6 +1242,9 @@ window.updateInvoiceHeader = function() {
     if ($('invNumberDisplay')) $('invNumberDisplay').textContent = '#' + (sales.length + 1);
 };
 
+// ═══════════════════════════════════════════════════════════
+// saveSale - النسخة النهائية مع الكوبون والنقاط
+// ═══════════════════════════════════════════════════════════
 window.saveSale = function() {
     if (!canAdd()) { showToast('⚠️ لا تملك صلاحية', 'error'); return; }
     if (currentSaleItems.length === 0) { showToast('⚠️ لا توجد أصناف', 'error'); return; }
@@ -1303,7 +1287,26 @@ window.saveSale = function() {
         levelDiscount = levelDiscountValue;
     }
 
-    const total = Math.max(0, subtotal + vat - discount - levelDiscount);
+    // ✅ خصم الكوبون
+    let couponDiscount = 0;
+    let couponCode = null;
+    if (window.currentCoupon && typeof window.validateCoupon === 'function') {
+        const validation = window.validateCoupon(window.currentCoupon, subtotal);
+        if (validation.valid) {
+            couponDiscount = validation.discount;
+            couponCode = window.currentCoupon.code;
+        }
+    }
+
+    // ✅ خصم النقاط
+    let pointsDiscount = 0;
+    let redeemedPoints = 0;
+    if (window.currentPointsToRedeem > 0 && window.LOYALTY_CONFIG) {
+        pointsDiscount = window.currentPointsToRedeem * window.LOYALTY_CONFIG.POINT_VALUE;
+        redeemedPoints = window.currentPointsToRedeem;
+    }
+
+    const total = Math.max(0, subtotal + vat - discount - levelDiscount - couponDiscount - pointsDiscount);
 
     const today = getTodayDate();
     let cogsTotal = 0;
@@ -1324,8 +1327,10 @@ window.saveSale = function() {
         subtotal: subtotal, vat: vat,
         discount: discount, discountType: discountType, discountValue: discountValue,
         levelDiscount: levelDiscount, levelDiscountType: levelDiscountType, levelDiscountValue: levelDiscountValue,
+        couponDiscount: couponDiscount, couponCode: couponCode,
+        redeemedPoints: redeemedPoints, pointsDiscount: pointsDiscount,
         total: total,
-        cogs: cogsTotal, profit: subtotal - cogsTotal - discount - levelDiscount,
+        cogs: cogsTotal, profit: subtotal - cogsTotal - discount - levelDiscount - couponDiscount - pointsDiscount,
         paidAmount: isCash ? total : 0,
         remainingAmount: isCash ? 0 : total,
         status: isCash ? 'paid' : 'unpaid',
@@ -1334,6 +1339,11 @@ window.saveSale = function() {
         soldBy: currentUser ? currentUser.name : ''
     };
     sales.push(inv);
+
+    // استخدام الكوبون
+    if (window.currentCoupon && typeof window.useCoupon === 'function') {
+        window.useCoupon(window.currentCoupon.id);
+    }
 
     if (isCash) {
         treasury.push({
@@ -1348,7 +1358,9 @@ window.saveSale = function() {
     setData('sales', sales);
     setData('products', products);
     setData('treasury', treasury);
+    setData('coupons', window.coupons);
 
+    // قيود محاسبية
     try {
         if (typeof window.getAccountByCode === 'function' && typeof window.createJournalEntry === 'function') {
             const salesAccount = window.getAccountByCode('4100');
@@ -1395,12 +1407,25 @@ window.saveSale = function() {
         }
     });
 
+    // إعادة تعيين
     currentSaleItems = [];
+    window.currentCoupon = null;
+    window.currentPointsToRedeem = 0;
     if ($('saleCustomer')) $('saleCustomer').value = '';
     if ($('saleDiscount')) $('saleDiscount').value = '0';
     if ($('saleLevelDiscount')) $('saleLevelDiscount').value = '0';
     if ($('saleDelivery')) $('saleDelivery').value = '';
     if ($('saleShipping')) $('saleShipping').value = '';
+    if ($('saleCouponCode')) $('saleCouponCode').value = '';
+    if ($('redeemPointsInput')) $('redeemPointsInput').value = '';
+    
+    const couponBox = $('couponInfoBox');
+    if (couponBox) couponBox.style.display = 'none';
+    const redeemInfo = $('redeemedPointsInfo');
+    if (redeemInfo) redeemInfo.style.display = 'none';
+    const pointsBox = $('customerPointsBox');
+    if (pointsBox) pointsBox.style.display = 'none';
+    
     setRadioValue('salePaymentMethod', 'cash');
     setRadioValue('saleInvoiceType', 'simple');
 
@@ -1411,6 +1436,7 @@ window.saveSale = function() {
     renderProducts();
     updateDashboard();
     renderCashBoxes();
+    if (typeof renderCustomers === 'function') renderCustomers();
 
     showToast('✅ فاتورة #' + inv.number + ' - ' + formatMoney(total) + (isCash ? ' 💵' : ' 📝 آجل'), 'success');
     scheduleAutoSync();
@@ -1420,14 +1446,18 @@ window.clearSale = function() {
     if (currentSaleItems.length === 0) return;
     if (!confirm('⚠️ إلغاء الفاتورة؟')) return;
     currentSaleItems = [];
+    window.currentCoupon = null;
+    window.currentPointsToRedeem = 0;
     if ($('saleCustomer')) $('saleCustomer').value = '';
     if ($('saleDiscount')) $('saleDiscount').value = '0';
     if ($('saleLevelDiscount')) $('saleLevelDiscount').value = '0';
+    if ($('saleCouponCode')) $('saleCouponCode').value = '';
+    if ($('redeemPointsInput')) $('redeemPointsInput').value = '';
     renderCashier();
     updateSaleTotals();
     showToast('🗑️ تم الإلغاء', 'info');
 };
-  // ═══════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
 // المشتريات
 // ═══════════════════════════════════════════════════════════
 window.populatePurProducts = function() {
@@ -1932,9 +1962,10 @@ window.renderInvoices = function() {
     sorted.forEach(function(inv) {
         const statusLabel = inv.status === 'paid' ? '✅' : inv.status === 'partial' ? '⚠️' : '❌';
         const payIcons = { 'cash': '💵', 'credit': '📝', 'wallet': '📱', 'visa': '💳', 'bank': '🏦', 'installment': '📅' };
+        const couponBadge = inv.couponCode ? ' 🎫' : '';
         html += '<div class="table-row" style="grid-template-columns: 0.5fr 1.3fr 1fr 0.8fr 0.7fr 1.5fr;">' +
             '<span>#' + inv.number + '</span>' +
-            '<span>' + (inv.customer || 'عميل نقدي') + '</span>' +
+            '<span>' + (inv.customer || 'عميل نقدي') + couponBadge + '</span>' +
             '<span style="color:#2D8F5E;font-weight:700;">' + formatMoney(inv.total) + '</span>' +
             '<span>' + (payIcons[inv.paymentMethod] || '💵') + '</span>' +
             '<span style="font-size:14px;">' + statusLabel + '</span>' +
@@ -1989,6 +2020,8 @@ window.showInvoiceDetails = function(id) {
                 '</div>' +
                 (inv.vat > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#9B59B6;"><span>الضريبة:</span><span>' + formatMoney(inv.vat) + ' ج.م</span></div>' : '') +
                 (inv.discount > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#E6A830;"><span>الخصم:</span><span>' + formatMoney(inv.discount) + ' ج.م</span></div>' : '') +
+                (inv.couponDiscount > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#2D8F5E;"><span>🎫 كوبون ' + (inv.couponCode || '') + ':</span><span>- ' + formatMoney(inv.couponDiscount) + ' ج.م</span></div>' : '') +
+                (inv.pointsDiscount > 0 ? '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#C9A94E;"><span>⭐ ' + inv.redeemedPoints + ' نقطة:</span><span>- ' + formatMoney(inv.pointsDiscount) + ' ج.م</span></div>' : '') +
                 '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:2px solid #C9A94E;margin-top:6px;font-size:16px;font-weight:900;color:#C9A94E;">' +
                     '<span>الإجمالي:</span><span>' + formatMoney(inv.total) + ' ج.م</span>' +
                 '</div>' +
@@ -2042,6 +2075,8 @@ window.printInvoice = function(id) {
         '<div class="totals"><div><span>المجموع:</span><span>' + formatMoney(inv.subtotal || inv.total) + ' ج.م</span></div>' +
         (inv.vat > 0 ? '<div><span>الضريبة:</span><span>' + formatMoney(inv.vat) + ' ج.م</span></div>' : '') +
         (inv.discount > 0 ? '<div><span>الخصم:</span><span>- ' + formatMoney(inv.discount) + ' ج.م</span></div>' : '') +
+        (inv.couponDiscount > 0 ? '<div><span>كوبون ' + (inv.couponCode || '') + ':</span><span>- ' + formatMoney(inv.couponDiscount) + ' ج.م</span></div>' : '') +
+        (inv.pointsDiscount > 0 ? '<div><span>' + inv.redeemedPoints + ' نقطة:</span><span>- ' + formatMoney(inv.pointsDiscount) + ' ج.م</span></div>' : '') +
         '<div class="final"><span>الإجمالي:</span><span>' + formatMoney(inv.total) + ' ج.م</span></div></div>' +
         '<div class="footer">' + (company.footer || 'شكراً لتعاملكم معنا 🌟') + '</div>' +
         '<script>window.onload=function(){setTimeout(function(){window.print();},500);};<\/script></body></html>';
@@ -2420,7 +2455,7 @@ window.printReceipt = function(id) {
     const w = window.open('', '_blank');
     if (w) { w.document.write(content); w.document.close(); }
 };
-    // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // المرتجعات
 // ═══════════════════════════════════════════════════════════
 window.toggleReturnParty = function() {
@@ -3115,12 +3150,13 @@ window.saveCompanySettings = function() {
 
 window.exportData = function() {
     const data = {
-        version: '16.0.0', exportDate: new Date().toISOString(),
+        version: '16.2.0', exportDate: new Date().toISOString(),
         products: products, sales: sales, purchases: purchases,
         customers: customers, suppliers: suppliers, cashBoxes: cashBoxes,
         expenses: expenses, treasury: treasury, payments: payments,
         returns: returns, users: users, accounts: accounts,
-        journalEntries: journalEntries, companyData: companyData
+        journalEntries: journalEntries, coupons: coupons,
+        companyData: companyData
     };
     const json = JSON.stringify(data, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
@@ -3140,7 +3176,7 @@ window.importData = function(event) {
     reader.onload = function(e) {
         try {
             const data = JSON.parse(e.target.result);
-            ['products','sales','purchases','customers','suppliers','cashBoxes','expenses','treasury','payments','returns','users','accounts','journalEntries','companyData'].forEach(function(k) {
+            ['products','sales','purchases','customers','suppliers','cashBoxes','expenses','treasury','payments','returns','users','accounts','journalEntries','coupons','companyData'].forEach(function(k) {
                 if (data[k]) {
                     if (Array.isArray(data[k])) window[k] = data[k];
                     else window[k] = Object.values(data[k]);
@@ -3169,6 +3205,7 @@ window.saveAll = function() {
     setData('users', users);
     setData('accounts', accounts);
     setData('journalEntries', journalEntries);
+    setData('coupons', coupons);
     setData('companyData', companyData);
 };
 
@@ -3176,7 +3213,7 @@ window.clearAllData = function() {
     if (!isAdmin()) { showToast('⚠️ لا تملك صلاحية', 'error'); return; }
     if (!confirm('⚠️ مسح جميع البيانات؟')) return;
     if (!confirm('⚠️ تأكيد نهائي؟')) return;
-    ['products','sales','purchases','customers','suppliers','cashBoxes','expenses','treasury','payments','returns','users','accounts','journalEntries','companyData'].forEach(function(k) {
+    ['products','sales','purchases','customers','suppliers','cashBoxes','expenses','treasury','payments','returns','users','accounts','journalEntries','coupons','companyData'].forEach(function(k) {
         localStorage.removeItem(STORAGE_KEY + k);
     });
     localStorage.removeItem('mizan_seeded_v3');
@@ -3343,7 +3380,7 @@ window.refreshAllUI = function() {
 };
 
 window.init = function() {
-    console.log('🚀 بدء التهيئة v16.0.0...');
+    console.log('🚀 بدء التهيئة v16.2.0...');
 
     window.products = toArray(getData('products', []));
     window.sales = toArray(getData('sales', []));
@@ -3358,6 +3395,7 @@ window.init = function() {
     window.users = toArray(getData('users', []));
     window.accounts = toArray(getData('accounts', []));
     window.journalEntries = toArray(getData('journalEntries', []));
+    window.coupons = toArray(getData('coupons', []));
     window.companyData = getData('companyData', { name: 'الميزان', phone: '', address: '', tax: '', footer: 'شكراً لتعاملكم معنا 🌟' });
     window.vatSettings = getData('vatSettings', { defaultVAT: 14 });
 
@@ -3445,5 +3483,5 @@ window.init = function() {
 document.addEventListener('DOMContentLoaded', function() {
     init();
     setInterval(updateClock, 1000);
-    console.log('✅ app.js v16.0.0 كامل');
+    console.log('✅ app.js v16.2.0 كامل');
 });
