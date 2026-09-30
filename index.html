@@ -819,6 +819,77 @@
             </div>
         </div>
 
+        <!-- صفحة الموظفين -->
+<div id="page-employees" class="page-container">
+    <div class="page-content">
+        <h2><i class="fas fa-user-tie"></i> إدارة الموظفين</h2>
+
+        <div class="tabs-row">
+            <button class="tab-btn active" onclick="showHRTab('employees', this)">👥 الموظفين</button>
+            <button class="tab-btn" onclick="showHRTab('attendance', this)">⏰ الحضور</button>
+            <button class="tab-btn" onclick="showHRTab('salaries', this)">💰 الرواتب</button>
+        </div>
+
+        <!-- تبويب الموظفين -->
+        <div id="hrTabEmployees">
+            <div class="form-card">
+                <h3 id="empFormTitle">➕ إضافة موظف جديد</h3>
+                <input type="hidden" id="empId" />
+                <div class="form-row">
+                    <div class="form-group"><label>الاسم *</label><input type="text" id="empName" /></div>
+                    <div class="form-group"><label>الهاتف</label><input type="text" id="empPhone" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الوظيفة</label>
+                        <select id="empJobTitle">
+                            <option value="موظف">👤 موظف</option>
+                            <option value="كاشير">💰 كاشير</option>
+                            <option value="بائع">🛒 بائع</option>
+                            <option value="محاسب">📊 محاسب</option>
+                            <option value="مشرف">👔 مشرف</option>
+                            <option value="مدير">👑 مدير</option>
+                            <option value="عامل">🔧 عامل</option>
+                            <option value="أخرى">📋 أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>نوع الراتب</label>
+                        <select id="empSalaryType" onchange="updateSalaryLabel()">
+                            <option value="monthly">📅 شهري</option>
+                            <option value="daily">📆 يومي</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label id="salaryLabel">الراتب الشهري *</label><input type="number" id="empBaseSalary" min="0" step="0.01" /></div>
+                    <div class="form-group"><label>ساعات العمل اليومية</label><input type="number" id="empDailyHours" value="8" min="1" max="24" /></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>تاريخ التعيين</label><input type="date" id="empHireDate" /></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" id="empAddress" /></div>
+                </div>
+                <div class="form-group"><label>ملاحظات</label><input type="text" id="empNotes" /></div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="saveEmployee()"><i class="fas fa-save"></i> <span id="empSaveBtnText">إضافة</span></button>
+                    <button class="btn btn-secondary" onclick="resetEmployeeForm()"><i class="fas fa-times"></i> إلغاء</button>
+                </div>
+            </div>
+            <div id="empList"></div>
+        </div>
+
+        <!-- تبويب الحضور -->
+        <div id="hrTabAttendance" style="display:none;">
+            <div id="attendanceList"></div>
+        </div>
+
+        <!-- تبويب الرواتب -->
+        <div id="hrTabSalaries" style="display:none;">
+            <div id="salariesList"></div>
+        </div>
+    </div>
+</div>
+
         <!-- المخازن -->
         <div id="page-warehouses" class="page-container">
             <div class="page-content">
@@ -1116,6 +1187,7 @@
     <script src="warehouse-management.js"></script>
     <script src="charts.js"></script>
     <script src="loyalty.js"></script>
+    <script src="hr.js"></script>
 
     <script>
         window.addEventListener('load', function() {
