@@ -15,30 +15,6 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
-
-    <style>
-/* إجبار إظهار الشريط السفلي */
-.bottom-nav {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 100% !important;
-    max-width: 480px !important;
-    background: #1C1C1C !important;
-    display: flex !important;
-    justify-content: space-around !important;
-    padding: 6px 0 10px !important;
-    border-top: 1px solid #3D3D3D !important;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6) !important;
-    border-radius: 20px 20px 0 0 !important;
-    z-index: 999999 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    min-height: 60px !important;
-}
-</style>
-    
 </head>
 <body>
 
@@ -210,15 +186,15 @@
                     <label class="pos-pay-opt"><input type="radio" name="salePaymentMethod" value="installment"><span>📅 تقسيط</span></label>
                 </div>
                 <div class="form-row" style="margin-top:8px;">
-    <div class="pos-field">
-        <label>💰 الخزنة</label>
-        <select id="saleCashBox" class="pos-select"><option value="">اختر...</option></select>
-    </div>
-    <div class="pos-field">
-        <label>🏭 المستودع</label>
-        <select id="saleWarehouse" class="pos-select"><option value="">اختر المستودع...</option></select>
-    </div>
-</div>
+                    <div class="pos-field">
+                        <label>💰 الخزنة</label>
+                        <select id="saleCashBox" class="pos-select"><option value="">اختر...</option></select>
+                    </div>
+                    <div class="pos-field">
+                        <label>🏭 المستودع</label>
+                        <select id="saleWarehouse" class="pos-select"><option value="">اختر المستودع...</option></select>
+                    </div>
+                </div>
                 <div class="pos-section-title" style="margin-top:16px;">📦 إضافة صنف</div>
                 <div class="pos-add-item">
                     <select id="saleProduct" class="pos-select" onchange="updateSalePrice()" style="flex:2;"><option value="">اختر منتج...</option></select>
@@ -292,11 +268,10 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-row">
-    <div class="form-group"><label>💰 الخزنة</label><select id="purCashBox" class="inv-select"><option value="">اختر...</option></select></div>
-    <div class="form-group"><label>🏭 المستودع *</label><select id="purWarehouse" class="inv-select"><option value="">اختر المستودع...</option></select></div>
-</div>
-<div class="form-group"><label>ملاحظات</label><input type="text" id="purNotes" placeholder="اختياري" /></div>
+                        <div class="form-group"><label>💰 الخزنة</label><select id="purCashBox" class="inv-select"><option value="">اختر...</option></select></div>
+                        <div class="form-group"><label>🏭 المستودع *</label><select id="purWarehouse" class="inv-select"><option value="">اختر المستودع...</option></select></div>
+                    </div>
+                    <div class="form-group"><label>ملاحظات</label><input type="text" id="purNotes" placeholder="اختياري" /></div>
                     <div class="divider">— إضافة أصناف —</div>
                     <div class="form-row">
                         <div class="form-group"><label>المنتج</label><select id="purProduct" onchange="updatePurPrice()"><option value="">اختر...</option></select></div>
@@ -593,10 +568,10 @@
                         <div class="form-group"><label id="retPartyLabel">العميل</label><select id="retParty" class="inv-select"><option value="">اختر...</option></select></div>
                     </div>
                     <div class="form-row">
-    <div class="form-group"><label>💰 الخزنة *</label><select id="retCashBox" class="inv-select"><option value="">اختر...</option></select></div>
-    <div class="form-group"><label>🏭 المستودع *</label><select id="retWarehouse" class="inv-select"><option value="">اختر المستودع...</option></select></div>
-</div>
-<div class="form-group"><label>ملاحظات</label><input type="text" id="retNotes" /></div>
+                        <div class="form-group"><label>💰 الخزنة *</label><select id="retCashBox" class="inv-select"><option value="">اختر...</option></select></div>
+                        <div class="form-group"><label>🏭 المستودع *</label><select id="retWarehouse" class="inv-select"><option value="">اختر المستودع...</option></select></div>
+                    </div>
+                    <div class="form-group"><label>ملاحظات</label><input type="text" id="retNotes" /></div>
                     <div class="divider">— إضافة أصناف —</div>
                     <div class="form-row">
                         <div class="form-group"><label>المنتج</label><select id="retProduct" onchange="updateRetPrice()"><option value="">اختر...</option></select></div>
@@ -835,7 +810,7 @@
                 </div>
                 <div class="settings-section">
                     <h3>ℹ️ عن التطبيق</h3>
-                    <div class="settings-info-row"><span>الإصدار</span><span>16.0.0</span></div>
+                    <div class="settings-info-row"><span>الإصدار</span><span>16.3.0</span></div>
                     <div class="settings-info-row"><span>المنتجات</span><span id="setProductsCount">0</span></div>
                     <div class="settings-info-row"><span>الفواتير</span><span id="setSalesCount">0</span></div>
                     <div class="settings-info-row"><span>العملاء</span><span id="setCustomersCount">0</span></div>
@@ -853,75 +828,72 @@
         </div>
 
         <!-- صفحة الموظفين -->
-<div id="page-employees" class="page-container">
-    <div class="page-content">
-        <h2><i class="fas fa-user-tie"></i> إدارة الموظفين</h2>
+        <div id="page-employees" class="page-container">
+            <div class="page-content">
+                <h2><i class="fas fa-user-tie"></i> إدارة الموظفين</h2>
 
-        <div class="tabs-row">
-            <button class="tab-btn active" onclick="showHRTab('employees', this)">👥 الموظفين</button>
-            <button class="tab-btn" onclick="showHRTab('attendance', this)">⏰ الحضور</button>
-            <button class="tab-btn" onclick="showHRTab('salaries', this)">💰 الرواتب</button>
-        </div>
+                <div class="tabs-row">
+                    <button class="tab-btn active" onclick="showHRTab('employees', this)">👥 الموظفين</button>
+                    <button class="tab-btn" onclick="showHRTab('attendance', this)">⏰ الحضور</button>
+                    <button class="tab-btn" onclick="showHRTab('salaries', this)">💰 الرواتب</button>
+                </div>
 
-        <!-- تبويب الموظفين -->
-        <div id="hrTabEmployees">
-            <div class="form-card">
-                <h3 id="empFormTitle">➕ إضافة موظف جديد</h3>
-                <input type="hidden" id="empId" />
-                <div class="form-row">
-                    <div class="form-group"><label>الاسم *</label><input type="text" id="empName" /></div>
-                    <div class="form-group"><label>الهاتف</label><input type="text" id="empPhone" /></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>الوظيفة</label>
-                        <select id="empJobTitle">
-                            <option value="موظف">👤 موظف</option>
-                            <option value="كاشير">💰 كاشير</option>
-                            <option value="بائع">🛒 بائع</option>
-                            <option value="محاسب">📊 محاسب</option>
-                            <option value="مشرف">👔 مشرف</option>
-                            <option value="مدير">👑 مدير</option>
-                            <option value="عامل">🔧 عامل</option>
-                            <option value="أخرى">📋 أخرى</option>
-                        </select>
+                <div id="hrTabEmployees">
+                    <div class="form-card">
+                        <h3 id="empFormTitle">➕ إضافة موظف جديد</h3>
+                        <input type="hidden" id="empId" />
+                        <div class="form-row">
+                            <div class="form-group"><label>الاسم *</label><input type="text" id="empName" /></div>
+                            <div class="form-group"><label>الهاتف</label><input type="text" id="empPhone" /></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>الوظيفة</label>
+                                <select id="empJobTitle">
+                                    <option value="موظف">👤 موظف</option>
+                                    <option value="كاشير">💰 كاشير</option>
+                                    <option value="بائع">🛒 بائع</option>
+                                    <option value="محاسب">📊 محاسب</option>
+                                    <option value="مشرف">👔 مشرف</option>
+                                    <option value="مدير">👑 مدير</option>
+                                    <option value="عامل">🔧 عامل</option>
+                                    <option value="أخرى">📋 أخرى</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>نوع الراتب</label>
+                                <select id="empSalaryType" onchange="updateSalaryLabel()">
+                                    <option value="monthly">📅 شهري</option>
+                                    <option value="daily">📆 يومي</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label id="salaryLabel">الراتب الشهري *</label><input type="number" id="empBaseSalary" min="0" step="0.01" /></div>
+                            <div class="form-group"><label>ساعات العمل اليومية</label><input type="number" id="empDailyHours" value="8" min="1" max="24" /></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>تاريخ التعيين</label><input type="date" id="empHireDate" /></div>
+                            <div class="form-group"><label>العنوان</label><input type="text" id="empAddress" /></div>
+                        </div>
+                        <div class="form-group"><label>ملاحظات</label><input type="text" id="empNotes" /></div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="saveEmployee()"><i class="fas fa-save"></i> <span id="empSaveBtnText">إضافة</span></button>
+                            <button class="btn btn-secondary" onclick="resetEmployeeForm()"><i class="fas fa-times"></i> إلغاء</button>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>نوع الراتب</label>
-                        <select id="empSalaryType" onchange="updateSalaryLabel()">
-                            <option value="monthly">📅 شهري</option>
-                            <option value="daily">📆 يومي</option>
-                        </select>
-                    </div>
+                    <div id="empList"></div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group"><label id="salaryLabel">الراتب الشهري *</label><input type="number" id="empBaseSalary" min="0" step="0.01" /></div>
-                    <div class="form-group"><label>ساعات العمل اليومية</label><input type="number" id="empDailyHours" value="8" min="1" max="24" /></div>
+
+                <div id="hrTabAttendance" style="display:none;">
+                    <div id="attendanceList"></div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group"><label>تاريخ التعيين</label><input type="date" id="empHireDate" /></div>
-                    <div class="form-group"><label>العنوان</label><input type="text" id="empAddress" /></div>
-                </div>
-                <div class="form-group"><label>ملاحظات</label><input type="text" id="empNotes" /></div>
-                <div class="form-actions">
-                    <button class="btn btn-primary" onclick="saveEmployee()"><i class="fas fa-save"></i> <span id="empSaveBtnText">إضافة</span></button>
-                    <button class="btn btn-secondary" onclick="resetEmployeeForm()"><i class="fas fa-times"></i> إلغاء</button>
+
+                <div id="hrTabSalaries" style="display:none;">
+                    <div id="salariesList"></div>
                 </div>
             </div>
-            <div id="empList"></div>
         </div>
-
-        <!-- تبويب الحضور -->
-        <div id="hrTabAttendance" style="display:none;">
-            <div id="attendanceList"></div>
-        </div>
-
-        <!-- تبويب الرواتب -->
-        <div id="hrTabSalaries" style="display:none;">
-            <div id="salariesList"></div>
-        </div>
-    </div>
-</div>
 
         <!-- المخازن -->
         <div id="page-warehouses" class="page-container">
@@ -1151,7 +1123,7 @@
                             <select id="whReportType" class="inv-select">
                                 <option value="current">📦 المخزون الحالي</option>
                                 <option value="movement">📊 حركة المخزون</option>
-                                <option value="lowstock">⚠️ المنتجات القاربة على النفاذ</option>
+                                <option value="lowstock">⚠️ المنتجات القاربة على النافذ</option>
                             </select>
                         </div>
                         <div class="form-row">
@@ -1164,32 +1136,7 @@
             </div>
         </div>
 
-        <!-- ═══════ الشريط السفلي ═══════ -->
-<nav class="bottom-nav" id="bottomNav" style="position:fixed !important;bottom:0 !important;left:50% !important;transform:translateX(-50%) !important;width:100% !important;max-width:480px !important;background:#1C1C1C !important;display:flex !important;justify-content:space-around !important;padding:6px 0 10px !important;border-top:1px solid #3D3D3D !important;box-shadow:0 -4px 20px rgba(0,0,0,0.6) !important;border-radius:20px 20px 0 0 !important;z-index:999999 !important;visibility:visible !important;opacity:1 !important;min-height:60px !important;">
-    <button class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#C9A94E !important;font-size:10px !important;font-weight:800 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
-        <i class="fas fa-chart-pie" style="font-size:18px !important;margin-bottom:3px !important;color:#C9A94E !important;"></i>
-        <span>الرئيسية</span>
-    </button>
-    <button class="nav-item" data-page="inventory" onclick="navigateTo('inventory')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
-        <i class="fas fa-box" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
-        <span>المخزون</span>
-    </button>
-    <button class="nav-item" data-page="cashier" onclick="navigateTo('cashier')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
-        <i class="fas fa-cash-register" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
-        <span>الكاشير</span>
-    </button>
-    <button class="nav-item" data-page="reports" onclick="navigateTo('reports')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
-        <i class="fas fa-chart-bar" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
-        <span>التقارير</span>
-    </button>
-    <button class="nav-item" data-page="more" onclick="toggleMoreMenu()" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
-        <i class="fas fa-ellipsis-h" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
-        <span>المزيد</span>
-    </button>
-</nav>
-
-<div id="modalOverlay" class="modal-overlay"></div>
-
+        <!-- moreMenu -->
         <div id="moreMenu" style="display:none;position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:#1C1C1C;border:2px solid #C9A94E;border-radius:14px;padding:12px;z-index:100;min-width:280px;max-width:90%;box-shadow:0 -8px 32px rgba(0,0,0,0.7);">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <button class="more-item" onclick="navigateTo('purchases'); toggleMoreMenu();"><i class="fas fa-shopping-cart" style="color:#E06060;"></i> المشتريات</button>
@@ -1205,10 +1152,19 @@
                 <button class="more-item" onclick="navigateTo('cash-boxes'); toggleMoreMenu();"><i class="fas fa-money-bill-wave" style="color:#9B59B6;"></i> الخزائن</button>
                 <button class="more-item" onclick="navigateTo('warehouses'); toggleMoreMenu();"><i class="fas fa-warehouse" style="color:#4A8AB5;"></i> المخازن</button>
                 <button class="more-item" onclick="navigateTo('users'); toggleMoreMenu();"><i class="fas fa-user-cog" style="color:#9B59B6;"></i> المستخدمين</button>
-                <button class="more-item" onclick="navigateTo('employees'); toggleMoreMenu();"> <i class="fas fa-user-tie" style="color:#4A8AB5;"></i> الموظفين</button>
+                <button class="more-item" onclick="navigateTo('employees'); toggleMoreMenu();"><i class="fas fa-user-tie" style="color:#4A8AB5;"></i> الموظفين</button>
                 <button class="more-item" onclick="navigateTo('settings'); toggleMoreMenu();"><i class="fas fa-cog" style="color:#C9A94E;"></i> الإعدادات</button>
             </div>
         </div>
+
+        <!-- الشريط السفلي - داخل appContent -->
+        <nav class="bottom-nav" id="bottomNav">
+            <button class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></button>
+            <button class="nav-item" data-page="inventory" onclick="navigateTo('inventory')"><i class="fas fa-box"></i><span>المخزون</span></button>
+            <button class="nav-item" data-page="cashier" onclick="navigateTo('cashier')"><i class="fas fa-cash-register"></i><span>الكاشير</span></button>
+            <button class="nav-item" data-page="reports" onclick="navigateTo('reports')"><i class="fas fa-chart-bar"></i><span>التقارير</span></button>
+            <button class="nav-item" data-page="more" onclick="toggleMoreMenu()"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></button>
+        </nav>
 
     </div>
 
@@ -1220,36 +1176,31 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <script src="console-cleaner.js"></script>
-<script src="fixes.js"></script>
-<script src="crypto.js"></script>
-<script src="session.js"></script>
-<script src="2fa.js"></script>
-<script src="security.js"></script>
-<script src="app.js"></script>
-<script src="app-extras.js"></script>
-<script src="accounts.js"></script>
-<script src="notifications.js"></script>
-<script src="language.js"></script>
-<script src="erp.js"></script>
-<script src="device-lock.js"></script>
-<script src="qrcode.js"></script>
-<script src="reports-pdf.js"></script>
-<script src="whatsapp.js"></script>
-<script src="ai-predictions.js"></script>
-<script src="warehouse-management.js"></script>
-<script src="charts.js"></script>
-<script src="loyalty.js"></script>
-<script src="hr.js"></script>
+    <script src="fixes.js"></script>
+    <script src="crypto.js"></script>
+    <script src="session.js"></script>
+    <script src="2fa.js"></script>
+    <script src="security.js"></script>
+    <script src="app.js"></script>
+    <script src="app-extras.js"></script>
+    <script src="accounts.js"></script>
+    <script src="notifications.js"></script>
+    <script src="language.js"></script>
+    <script src="erp.js"></script>
+    <script src="device-lock.js"></script>
+    <script src="qrcode.js"></script>
+    <script src="reports-pdf.js"></script>
+    <script src="whatsapp.js"></script>
+    <script src="ai-predictions.js"></script>
+    <script src="warehouse-management.js"></script>
+    <script src="charts.js"></script>
+    <script src="loyalty.js"></script>
+    <script src="hr.js"></script>
         
     <script>
-    // ═══ تسجيل Service Worker الجديد ═══
     if ('serviceWorker' in navigator) {
-        // إلغاء Service Workers القديمة أولاً
         navigator.serviceWorker.getRegistrations().then(function(regs) {
-            regs.forEach(function(reg) {
-                reg.unregister();
-                console.log('🗑️ تم إلغاء Service Worker قديم:', reg.scope);
-            });
+            regs.forEach(function(reg) { reg.unregister(); });
         });
     }
     
@@ -1259,6 +1210,6 @@
             console.log('🔒 نظام الأمان جاهز');
         }, 3000);
     });
-</script>
+    </script>
 </body>
 </html>
