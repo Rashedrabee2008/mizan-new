@@ -1140,13 +1140,31 @@
             </div>
         </div>
 
-        <nav class="bottom-nav">
-            <button class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></button>
-            <button class="nav-item" data-page="inventory" onclick="navigateTo('inventory')"><i class="fas fa-box"></i><span>المخزون</span></button>
-            <button class="nav-item" data-page="cashier" onclick="navigateTo('cashier')"><i class="fas fa-cash-register"></i><span>الكاشير</span></button>
-            <button class="nav-item" data-page="reports" onclick="navigateTo('reports')"><i class="fas fa-chart-bar"></i><span>التقارير</span></button>
-            <button class="nav-item" data-page="more" onclick="toggleMoreMenu()"><i class="fas fa-ellipsis-h"></i><span>المزيد</span></button>
-        </nav>
+        <!-- ═══════ الشريط السفلي ═══════ -->
+<nav class="bottom-nav" id="bottomNav" style="position:fixed !important;bottom:0 !important;left:50% !important;transform:translateX(-50%) !important;width:100% !important;max-width:480px !important;background:#1C1C1C !important;display:flex !important;justify-content:space-around !important;padding:6px 0 10px !important;border-top:1px solid #3D3D3D !important;box-shadow:0 -4px 20px rgba(0,0,0,0.6) !important;border-radius:20px 20px 0 0 !important;z-index:999999 !important;visibility:visible !important;opacity:1 !important;min-height:60px !important;">
+    <button class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#C9A94E !important;font-size:10px !important;font-weight:800 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
+        <i class="fas fa-chart-pie" style="font-size:18px !important;margin-bottom:3px !important;color:#C9A94E !important;"></i>
+        <span>الرئيسية</span>
+    </button>
+    <button class="nav-item" data-page="inventory" onclick="navigateTo('inventory')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
+        <i class="fas fa-box" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
+        <span>المخزون</span>
+    </button>
+    <button class="nav-item" data-page="cashier" onclick="navigateTo('cashier')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
+        <i class="fas fa-cash-register" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
+        <span>الكاشير</span>
+    </button>
+    <button class="nav-item" data-page="reports" onclick="navigateTo('reports')" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
+        <i class="fas fa-chart-bar" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
+        <span>التقارير</span>
+    </button>
+    <button class="nav-item" data-page="more" onclick="toggleMoreMenu()" style="display:flex !important;flex-direction:column !important;align-items:center !important;color:#5D5D5D !important;font-size:10px !important;font-weight:600 !important;cursor:pointer !important;padding:4px 2px !important;background:transparent !important;border:none !important;min-width:46px !important;font-family:inherit !important;">
+        <i class="fas fa-ellipsis-h" style="font-size:18px !important;margin-bottom:3px !important;color:#5D5D5D !important;"></i>
+        <span>المزيد</span>
+    </button>
+</nav>
+
+<div id="modalOverlay" class="modal-overlay"></div>
 
         <div id="moreMenu" style="display:none;position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:#1C1C1C;border:2px solid #C9A94E;border-radius:14px;padding:12px;z-index:100;min-width:280px;max-width:90%;box-shadow:0 -8px 32px rgba(0,0,0,0.7);">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
