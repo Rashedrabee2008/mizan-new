@@ -1205,7 +1205,10 @@
     <script src="warehouse-management.js"></script>
     <script src="charts.js"></script>
     <script src="loyalty.js"></script>
-    <script src="hr.js"></script>
+        <script src="hr.js"></script>
+    
+    <!-- 🔧 إصلاح شاشة الدخول -->
+    <script src="login-fix.js"></script>
     
     <!-- 🚀 تحسينات الأداء والأمان -->
     <script src="performance-boost.js"></script>
@@ -1215,7 +1218,6 @@
     <script src="dashboard-fix.js"></script>
         
     <script>
-    // Service Worker cleanup
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
             regs.forEach(function(reg) { reg.unregister(); });
@@ -1226,7 +1228,7 @@
         setTimeout(function() {
             if (typeof upgradeUserPasswords === 'function') upgradeUserPasswords();
             console.log('🔒 نظام الأمان جاهز');
-            console.log('🚀 كل التحسينات جاهزة - التطبيق بأعلى أداء!');
+            console.log('🚀 كل التحسينات جاهزة');
         }, 3000);
     });
     </script>
