@@ -1200,12 +1200,23 @@
     <script src="hr.js"></script>
 
     <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                if (typeof upgradeUserPasswords === 'function') upgradeUserPasswords();
-                console.log('🔒 نظام الأمان جاهز');
-            }, 3000);
+    // ═══ تسجيل Service Worker الجديد ═══
+    if ('serviceWorker' in navigator) {
+        // إلغاء Service Workers القديمة أولاً
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+            regs.forEach(function(reg) {
+                reg.unregister();
+                console.log('🗑️ تم إلغاء Service Worker قديم:', reg.scope);
+            });
         });
-    </script>
+    }
+    
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            if (typeof upgradeUserPasswords === 'function') upgradeUserPasswords();
+            console.log('🔒 نظام الأمان جاهز');
+        }, 3000);
+    });
+</script>
 </body>
 </html>
