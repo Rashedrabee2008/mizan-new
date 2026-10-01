@@ -30,7 +30,7 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 
 
 /* ═══════════════════════════════════════════════════════════
-   🔝 الهيدر - نسخة محسّنة (سطرين)
+   🔝 الهيدر - نسخة محسّنة (صفين: اللوجو فوق، والمعلومات تحته)
    ═══════════════════════════════════════════════════════════ */
 
 /* الهيدر الرئيسي - عمودي */
@@ -46,6 +46,8 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     margin-bottom: 14px !important;
     position: relative !important;
     overflow: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* ═══ الصف الأول: اللوجو + الاسم + أزرار القفل ═══ */
@@ -82,6 +84,7 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     gap: 2px !important;
     flex: 1 !important;
     text-align: right !important;
+    min-width: 0 !important;
 }
 
 .top-header .header-text h1 {
@@ -96,17 +99,20 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     font-size: 11px !important;
     color: #A89070 !important;
     line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
-/* أزرار التحكم (قفل، EN، وضع ليلي، إلخ) */
+/* أزرار التحكم (الساعة + القفل) */
 .top-header .header-controls {
     display: flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 6px !important;
     flex-shrink: 0 !important;
 }
 
-/* ═══ الصف الثاني: الساعة + المستخدم ═══ */
+/* ═══ الصف الثاني: المستخدم + المزامنة ═══ */
 .top-header .header-info {
     display: flex !important;
     align-items: center !important;
@@ -125,9 +131,9 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     background: linear-gradient(135deg, #0D0D0D, #1A1A1A) !important;
     border: 1.5px solid #C9A94E !important;
     border-radius: 8px !important;
-    padding: 0 12px !important;
+    padding: 0 10px !important;
     color: #C9A94E !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
     font-family: 'Courier New', monospace !important;
     direction: ltr !important;
     height: 32px !important;
@@ -252,36 +258,41 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     flex-shrink: 0 !important;
 }
 
-/* ═══ Responsive - شاشات صغيرة ═══ */
+/* ═══ Responsive - شاشات صغيرة (أقل من 480px) ═══ */
 @media (max-width: 480px) {
     .top-header {
         padding: 10px 12px !important;
         gap: 8px !important;
     }
     
+    .top-header .header-top {
+        gap: 8px !important;
+    }
+    
     .top-header .logo-icon {
-        width: 38px !important;
-        height: 38px !important;
-        font-size: 20px !important;
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 18px !important;
     }
     
     .top-header .header-text h1 {
-        font-size: 16px !important;
+        font-size: 15px !important;
     }
     
     .top-header .header-text .sub-title {
-        font-size: 10px !important;
+        font-size: 9px !important;
     }
     
     .top-header .clock {
-        font-size: 11px !important;
-        height: 30px !important;
-        padding: 0 10px !important;
+        font-size: 9px !important;
+        height: 28px !important;
+        padding: 0 6px !important;
+        letter-spacing: 0 !important;
     }
     
     .top-header .user-badge {
         font-size: 11px !important;
-        height: 30px !important;
+        height: 28px !important;
         padding: 0 8px !important;
     }
     
@@ -299,9 +310,99 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
         height: 30px !important;
         font-size: 12px !important;
     }
+    
+    #syncStatus {
+        height: 28px !important;
+        font-size: 9px !important;
+        max-width: 110px !important;
+        padding: 0 8px !important;
+    }
 }
 
-/* ═══ Responsive - شاشات كبيرة ═══ */
+/* ═══ Responsive - موبايل صغير جداً (أقل من 400px) ═══ */
+@media (max-width: 400px) {
+    .top-header {
+        padding: 8px 10px !important;
+        gap: 6px !important;
+    }
+    
+    .top-header .logo-icon {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 16px !important;
+    }
+    
+    .top-header .header-text h1 {
+        font-size: 14px !important;
+    }
+    
+    .top-header .header-text .sub-title {
+        display: none !important;
+    }
+    
+    .top-header .clock {
+        font-size: 8px !important;
+        height: 26px !important;
+        padding: 0 5px !important;
+        letter-spacing: -0.2px !important;
+    }
+    
+    .top-header .user-badge {
+        font-size: 10px !important;
+        height: 26px !important;
+        padding: 0 6px !important;
+    }
+    
+    .top-header .lock-btn,
+    #langToggleBtn,
+    #themeToggleBtn,
+    #manualSyncBtn,
+    #consoleFilterBtn {
+        width: 28px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+        font-size: 11px !important;
+    }
+    
+    #syncStatus {
+        height: 26px !important;
+        font-size: 8px !important;
+        max-width: 90px !important;
+        padding: 0 6px !important;
+    }
+}
+
+/* ═══ Responsive - تابلت (481-767px) ═══ */
+@media (min-width: 481px) and (max-width: 767px) {
+    .top-header .clock {
+        font-size: 12px !important;
+        height: 34px !important;
+        padding: 0 12px !important;
+    }
+    
+    .top-header .logo-icon {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 22px !important;
+    }
+    
+    .top-header .header-text h1 {
+        font-size: 18px !important;
+    }
+    
+    .top-header .lock-btn,
+    #langToggleBtn,
+    #themeToggleBtn,
+    #manualSyncBtn,
+    #consoleFilterBtn {
+        width: 34px !important;
+        min-width: 34px !important;
+        height: 34px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* ═══ Responsive - شاشات كبيرة (768px+) ═══ */
 @media (min-width: 768px) {
     .top-header {
         padding: 16px 20px !important;
@@ -343,6 +444,13 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
         min-width: 38px !important;
         height: 38px !important;
         font-size: 15px !important;
+    }
+    
+    #syncStatus {
+        height: 38px !important;
+        font-size: 11px !important;
+        max-width: 160px !important;
+        padding: 0 14px !important;
     }
 }
 
@@ -737,17 +845,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 @media (max-width: 480px) {
     html { font-size: 13px; }
     body { padding: 8px 8px 100px; }
-    .top-header { padding: 8px 10px !important; gap: 4px !important; }
-    .top-header .logo-icon { width: 34px !important; height: 34px !important; font-size: 18px !important; }
-    .top-header .header-text { max-width: 90px !important; }
-    .top-header .header-text h1 { font-size: 14px !important; }
-    .top-header .header-text .sub-title { font-size: 8px !important; }
-    .top-header .header-actions { gap: 3px !important; }
-    .top-header .clock { display: inline-flex !important; font-size: 9px !important; padding: 0 5px !important; height: 28px !important; min-width: 125px !important; max-width: 135px !important; letter-spacing: 0 !important; border-width: 1.5px !important; }
-    .top-header .user-badge { width: 32px !important; padding: 0 !important; justify-content: center !important; }
-    .top-header .user-badge span { display: none !important; }
-    .top-header .user-badge i { font-size: 14px !important; }
-    #syncStatus { display: none !important; }
     .page-content { padding: 12px !important; }
     .page-content h2 { font-size: 18px !important; }
     .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 5px !important; margin-bottom: 8px !important; }
@@ -794,13 +891,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
    موبايل صغير (أقل من 400px)
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
-    .top-header { padding: 8px !important; gap: 3px !important; }
-    .top-header .logo-icon { width: 30px !important; height: 30px !important; font-size: 16px !important; }
-    .top-header .header-text { max-width: 70px !important; }
-    .top-header .header-text h1 { font-size: 13px !important; }
-    .top-header .header-text .sub-title { display: none !important; }
-    .top-header .clock { display: inline-flex !important; font-size: 8px !important; padding: 0 4px !important; height: 26px !important; min-width: 110px !important; max-width: 120px !important; letter-spacing: -0.2px !important; }
-    .top-header .user-badge, .top-header .lock-btn, #themeToggleBtn, #langToggleBtn, #manualSyncBtn, #consoleFilterBtn { width: 30px !important; min-width: 30px !important; height: 30px !important; font-size: 12px !important; }
     .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
     .dashboard-card { padding: 10px 6px !important; }
     .dashboard-card .number { font-size: 16px !important; }
@@ -829,7 +919,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
    تابلت (481-767px)
    ═══════════════════════════════════════════════════════════ */
 @media (min-width: 481px) and (max-width: 767px) {
-    .top-header .clock { font-size: 11px !important; min-width: 165px !important; height: 34px !important; }
     .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
     .dashboard-card { padding: 12px 8px !important; }
     .dashboard-card .number { font-size: 18px !important; }
@@ -845,16 +934,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
    ═══════════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
     body { padding: 20px 40px 100px !important; }
-    .top-header { padding: 14px 20px !important; gap: 16px !important; }
-    .top-header .logo-icon { width: 44px !important; height: 44px !important; font-size: 24px !important; }
-    .top-header .header-text { max-width: 180px !important; }
-    .top-header .header-text h1 { font-size: 20px !important; }
-    .top-header .header-text .sub-title { font-size: 12px !important; }
-    .top-header .clock { font-size: 14px !important; min-width: 210px !important; height: 40px !important; padding: 0 16px !important; }
-    .top-header .user-badge, .top-header .lock-btn, #themeToggleBtn, #langToggleBtn, #manualSyncBtn, #consoleFilterBtn { height: 38px !important; width: 38px !important; font-size: 14px !important; }
-    .top-header .user-badge { width: auto !important; padding: 0 12px !important; font-size: 13px !important; max-width: 150px !important; }
-    .top-header .user-badge span { display: inline !important; }
-    #syncStatus { display: inline-flex !important; height: 38px !important; font-size: 11px !important; max-width: 160px !important; }
     .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; margin-bottom: 16px !important; }
     .dashboard-card { padding: 16px 12px !important; border-right-width: 4px !important; }
     .dashboard-card .number { font-size: 22px !important; }
@@ -887,9 +966,10 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
    دعم اللغة الإنجليزية
    ═══════════════════════════════════════════════════════════ */
 html[dir="ltr"] body { direction: ltr !important; }
-html[dir="ltr"] .top-header { flex-direction: row !important; }
+html[dir="ltr"] .top-header { flex-direction: column !important; }
+html[dir="ltr"] .top-header .header-top { flex-direction: row-reverse !important; }
 html[dir="ltr"] .top-header .header-text { text-align: left !important; }
-html[dir="ltr"] .top-header .header-actions { margin-left: auto !important; margin-right: 0 !important; }
+html[dir="ltr"] .top-header .header-info { flex-direction: row-reverse !important; }
 html[dir="ltr"] .bottom-nav { direction: ltr !important; }
 html[dir="ltr"] input, html[dir="ltr"] select, html[dir="ltr"] textarea { text-align: left !important; direction: ltr !important; }
 
@@ -914,6 +994,8 @@ body.light-mode .table-row { background: #FFFFFF !important; color: #1A1A1A !imp
 body.light-mode input, body.light-mode select { background: #FFFFFF !important; color: #1A1A1A !important; border-color: #E0D5B8 !important; }
 body.light-mode .bottom-nav { background: #FFFFFF !important; border-color: #E0D5B8 !important; }
 body.light-mode #moreMenu .more-item { background: #F5F0E8 !important; color: #1A1A1A !important; border-color: #E0D5B8 !important; }
+body.light-mode .top-header .clock,
+body.light-mode .top-header .user-badge { background: #F5F0E8 !important; color: #B8953A !important; border-color: #C9A94E !important; }
 
 /* ═══════════════════════════════════════════════════════════
    الطباعة
