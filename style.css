@@ -28,38 +28,323 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 .login-box .error-msg.show { display: block; animation: shake 0.3s; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
+
 /* ═══════════════════════════════════════════════════════════
-   الهيدر
+   🔝 الهيدر - نسخة محسّنة (سطرين)
    ═══════════════════════════════════════════════════════════ */
-.top-header { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 6px !important; padding: 10px 12px !important; background: #1C1C1C !important; border-radius: 14px !important; border: 1px solid #2D2D2D !important; margin-bottom: 14px !important; overflow: hidden !important; flex-wrap: nowrap !important; }
-.top-header .logo-icon { flex-shrink: 0 !important; width: 38px !important; height: 38px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #C9A94E, #B8953A) !important; border-radius: 10px !important; font-size: 20px !important; }
-.top-header .logo-icon i { color: #0D0D0D !important; }
-.top-header .header-text { display: flex !important; flex-direction: column !important; gap: 1px !important; flex-shrink: 0 !important; max-width: 110px !important; }
-.top-header .header-text h1 { font-size: 15px !important; font-weight: 900 !important; color: #C9A94E !important; line-height: 1.1 !important; margin: 0 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
-.top-header .header-text .sub-title { font-size: 9px !important; color: #A89070 !important; line-height: 1.1 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
-.top-header .header-actions { display: flex !important; align-items: center !important; gap: 4px !important; margin-right: auto !important; flex-wrap: nowrap !important; overflow: hidden !important; flex-shrink: 1 !important; }
 
-.top-header .clock { display: inline-flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #0D0D0D, #1A1A1A) !important; border: 2px solid #C9A94E !important; border-radius: 10px !important; padding: 0 14px !important; color: #C9A94E !important; font-size: 13px !important; font-family: 'Courier New', monospace !important; direction: ltr !important; height: 36px !important; min-width: 190px !important; font-weight: 800 !important; white-space: nowrap !important; letter-spacing: 0.5px !important; box-shadow: 0 2px 8px rgba(201, 169, 78, 0.15) !important; flex-shrink: 0 !important; }
+/* الهيدر الرئيسي - عمودي */
+.top-header {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+    background: linear-gradient(135deg, #1C1C1C, #151515) !important;
+    border-radius: 14px !important;
+    border: 1px solid #2D2D2D !important;
+    border-top: 3px solid #C9A94E !important;
+    margin-bottom: 14px !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
 
-.top-header .user-badge { display: inline-flex !important; align-items: center !important; gap: 4px !important; padding: 0 8px !important; background: #0D0D0D !important; border: 1.5px solid #C9A94E !important; border-radius: 8px !important; color: #C9A94E !important; font-size: 11px !important; font-weight: 800 !important; max-width: 85px !important; height: 32px !important; overflow: hidden !important; white-space: nowrap !important; flex-shrink: 0 !important; }
-.top-header .user-badge i { font-size: 14px !important; flex-shrink: 0 !important; }
+/* ═══ الصف الأول: اللوجو + الاسم + أزرار القفل ═══ */
+.top-header .header-top {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    width: 100% !important;
+}
 
-.top-header .lock-btn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #E06060 !important; border-radius: 8px !important; color: #E06060 !important; cursor: pointer !important; font-size: 14px !important; padding: 0 !important; flex-shrink: 0 !important; }
-.top-header .lock-btn:hover { background: #E06060 !important; color: #fff !important; }
+/* اللوجو */
+.top-header .logo-icon {
+    flex-shrink: 0 !important;
+    width: 42px !important;
+    height: 42px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #C9A94E, #B8953A) !important;
+    border-radius: 12px !important;
+    font-size: 22px !important;
+    box-shadow: 0 4px 12px rgba(201, 169, 78, 0.3) !important;
+}
 
-#langToggleBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #3D3D3D !important; border-radius: 8px !important; color: #C9A94E !important; cursor: pointer !important; font-size: 11px !important; font-weight: 900 !important; padding: 0 !important; font-family: 'Tajawal', sans-serif !important; flex-shrink: 0 !important; }
-#langToggleBtn:hover { background: #C9A94E !important; color: #0D0D0D !important; }
+.top-header .logo-icon i {
+    color: #0D0D0D !important;
+}
 
-#themeToggleBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #3D3D3D !important; border-radius: 8px !important; color: #C9A94E !important; cursor: pointer !important; font-size: 12px !important; padding: 0 !important; flex-shrink: 0 !important; }
-#themeToggleBtn:hover { background: #C9A94E !important; color: #0D0D0D !important; }
+/* اسم التطبيق */
+.top-header .header-text {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    flex: 1 !important;
+    text-align: right !important;
+}
 
-#manualSyncBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #4A8AB5 !important; border-radius: 8px !important; color: #4A8AB5 !important; cursor: pointer !important; font-size: 14px !important; padding: 0 !important; flex-shrink: 0 !important; }
-#manualSyncBtn:hover { background: #4A8AB5 !important; color: #fff !important; }
+.top-header .header-text h1 {
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    color: #C9A94E !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+}
 
-#consoleFilterBtn { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 32px !important; min-width: 32px !important; height: 32px !important; background: #0D0D0D !important; border: 1.5px solid #9B59B6 !important; border-radius: 8px !important; color: #9B59B6 !important; cursor: pointer !important; font-size: 14px !important; padding: 0 !important; flex-shrink: 0 !important; }
-#consoleFilterBtn:hover { background: #9B59B6 !important; color: #fff !important; }
+.top-header .header-text .sub-title {
+    font-size: 11px !important;
+    color: #A89070 !important;
+    line-height: 1.2 !important;
+}
 
-#syncStatus { display: inline-flex !important; align-items: center !important; gap: 4px !important; background: #0D0D0D !important; border: 1.5px solid #3D3D3D !important; border-radius: 8px !important; padding: 0 10px !important; color: #A89070 !important; font-size: 10px !important; font-weight: 700 !important; height: 32px !important; white-space: nowrap !important; max-width: 130px !important; overflow: hidden !important; text-overflow: ellipsis !important; flex-shrink: 0 !important; }
+/* أزرار التحكم (قفل، EN، وضع ليلي، إلخ) */
+.top-header .header-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+}
+
+/* ═══ الصف الثاني: الساعة + المستخدم ═══ */
+.top-header .header-info {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    padding-top: 10px !important;
+    border-top: 1px dashed #2D2D2D !important;
+    width: 100% !important;
+}
+
+/* الساعة */
+.top-header .clock {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #0D0D0D, #1A1A1A) !important;
+    border: 1.5px solid #C9A94E !important;
+    border-radius: 8px !important;
+    padding: 0 12px !important;
+    color: #C9A94E !important;
+    font-size: 12px !important;
+    font-family: 'Courier New', monospace !important;
+    direction: ltr !important;
+    height: 32px !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* شارة المستخدم */
+.top-header .user-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 0 10px !important;
+    background: linear-gradient(135deg, #0D0D0D, #1A1A1A) !important;
+    border: 1.5px solid #C9A94E !important;
+    border-radius: 8px !important;
+    color: #C9A94E !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    height: 32px !important;
+    white-space: nowrap !important;
+}
+
+.top-header .user-badge i {
+    font-size: 14px !important;
+    flex-shrink: 0 !important;
+}
+
+/* زر القفل */
+.top-header .lock-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    background: #0D0D0D !important;
+    border: 1.5px solid #E06060 !important;
+    border-radius: 8px !important;
+    color: #E06060 !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    transition: all 0.2s !important;
+}
+
+.top-header .lock-btn:hover {
+    background: #E06060 !important;
+    color: #fff !important;
+    transform: scale(1.05) !important;
+}
+
+/* أزرار إضافية */
+#langToggleBtn,
+#themeToggleBtn,
+#manualSyncBtn,
+#consoleFilterBtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    background: #0D0D0D !important;
+    border: 1.5px solid #3D3D3D !important;
+    border-radius: 8px !important;
+    color: #C9A94E !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    transition: all 0.2s !important;
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+#langToggleBtn:hover,
+#themeToggleBtn:hover {
+    background: #C9A94E !important;
+    color: #0D0D0D !important;
+}
+
+#manualSyncBtn {
+    border-color: #4A8AB5 !important;
+    color: #4A8AB5 !important;
+}
+
+#manualSyncBtn:hover {
+    background: #4A8AB5 !important;
+    color: #fff !important;
+}
+
+#consoleFilterBtn {
+    border-color: #9B59B6 !important;
+    color: #9B59B6 !important;
+}
+
+#consoleFilterBtn:hover {
+    background: #9B59B6 !important;
+    color: #fff !important;
+}
+
+#syncStatus {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    background: #0D0D0D !important;
+    border: 1.5px solid #3D3D3D !important;
+    border-radius: 8px !important;
+    padding: 0 10px !important;
+    color: #A89070 !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    height: 32px !important;
+    white-space: nowrap !important;
+    max-width: 130px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    flex-shrink: 0 !important;
+}
+
+/* ═══ Responsive - شاشات صغيرة ═══ */
+@media (max-width: 480px) {
+    .top-header {
+        padding: 10px 12px !important;
+        gap: 8px !important;
+    }
+    
+    .top-header .logo-icon {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 20px !important;
+    }
+    
+    .top-header .header-text h1 {
+        font-size: 16px !important;
+    }
+    
+    .top-header .header-text .sub-title {
+        font-size: 10px !important;
+    }
+    
+    .top-header .clock {
+        font-size: 11px !important;
+        height: 30px !important;
+        padding: 0 10px !important;
+    }
+    
+    .top-header .user-badge {
+        font-size: 11px !important;
+        height: 30px !important;
+        padding: 0 8px !important;
+    }
+    
+    .top-header .user-badge i {
+        font-size: 13px !important;
+    }
+    
+    .top-header .lock-btn,
+    #langToggleBtn,
+    #themeToggleBtn,
+    #manualSyncBtn,
+    #consoleFilterBtn {
+        width: 30px !important;
+        min-width: 30px !important;
+        height: 30px !important;
+        font-size: 12px !important;
+    }
+}
+
+/* ═══ Responsive - شاشات كبيرة ═══ */
+@media (min-width: 768px) {
+    .top-header {
+        padding: 16px 20px !important;
+        gap: 14px !important;
+    }
+    
+    .top-header .logo-icon {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 26px !important;
+    }
+    
+    .top-header .header-text h1 {
+        font-size: 22px !important;
+    }
+    
+    .top-header .header-text .sub-title {
+        font-size: 13px !important;
+    }
+    
+    .top-header .clock {
+        font-size: 14px !important;
+        height: 38px !important;
+        padding: 0 16px !important;
+    }
+    
+    .top-header .user-badge {
+        height: 38px !important;
+        font-size: 13px !important;
+        padding: 0 14px !important;
+    }
+    
+    .top-header .lock-btn,
+    #langToggleBtn,
+    #themeToggleBtn,
+    #manualSyncBtn,
+    #consoleFilterBtn {
+        width: 38px !important;
+        min-width: 38px !important;
+        height: 38px !important;
+        font-size: 15px !important;
+    }
+}
 
 /* ═══════════════════════════════════════════════════════════
    الصفحات
