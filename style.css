@@ -622,7 +622,7 @@ body.light-mode .dashboard-card .label { color: #6A5A3A !important; }
     .modal-box { background: #fff !important; border: none !important; }
     .modal-close { display: none !important; }
     .top-header, .bottom-nav, #moreMenu { display: none !important; }
-}
+
 
 /* ═══════════════════════════════════════════════════════════
    إضافات
@@ -636,3 +636,358 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; }
 *:focus-visible { outline: 2px solid #C9A94E; outline-offset: 2px; }
+/* ═══════════════════════════════════════════════════════════
+   إصلاح: قائمة آخر المبيعات في لوحة التحكم
+   ═══════════════════════════════════════════════════════════ */
+
+.last-sales-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.last-sale-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #0D0D0D, #1A1A1A);
+    border: 1px solid #2D2D2D;
+    border-right: 4px solid #2D8F5E;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.last-sale-item:hover {
+    background: #151515;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(45, 143, 94, 0.15);
+}
+
+.last-sale-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0D0D0D;
+    border: 2px solid #2D8F5E;
+    border-radius: 50%;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.last-sale-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.last-sale-customer {
+    font-size: 14px;
+    font-weight: 900;
+    color: #F5E6C8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.last-sale-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 10px;
+    color: #A89070;
+    font-weight: 700;
+}
+
+.last-sale-amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.last-sale-total {
+    font-size: 16px;
+    font-weight: 900;
+    color: #2D8F5E;
+    font-family: 'Courier New', monospace;
+    direction: ltr;
+    line-height: 1;
+}
+
+.last-sale-currency {
+    font-size: 9px;
+    color: #5D5D5D;
+    font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   تفاصيل الفاتورة (Modal)
+   ═══════════════════════════════════════════════════════════ */
+
+.sale-detail-header {
+    background: #0D0D0D;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #2D2D2D;
+    font-size: 12px;
+    color: #F5E6C8;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    line-height: 1.6;
+}
+
+.sale-detail-header strong {
+    color: #C9A94E;
+    margin-left: 4px;
+}
+
+.sale-detail-items {
+    background: #0D0D0D;
+    border-radius: 10px;
+    border: 1px solid #2D2D2D;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.sale-detail-items-header {
+    display: grid;
+    grid-template-columns: 30px 2fr 1.5fr 1fr;
+    gap: 6px;
+    padding: 10px 12px;
+    background: #1A1A1A;
+    color: #C9A94E;
+    font-size: 11px;
+    font-weight: 900;
+    border-bottom: 2px solid #C9A94E;
+    text-align: center;
+}
+
+.sale-detail-item {
+    display: grid;
+    grid-template-columns: 30px 2fr 1.5fr 1fr;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #2D2D2D;
+    font-size: 12px;
+    color: #F5E6C8;
+    align-items: center;
+}
+
+.sale-detail-item:last-child {
+    border-bottom: none;
+}
+
+.sale-detail-num {
+    color: #A89070;
+    font-size: 11px;
+    text-align: center;
+}
+
+.sale-detail-name {
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sale-detail-qty {
+    color: #4A8AB5;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    direction: ltr;
+}
+
+.sale-detail-total {
+    color: #2D8F5E;
+    font-weight: 900;
+    text-align: center;
+    font-size: 12px;
+    direction: ltr;
+}
+
+.sale-detail-totals {
+    background: linear-gradient(135deg, #0D0D0D, #1A1A1A);
+    border-radius: 10px;
+    padding: 12px;
+    border: 2px solid #C9A94E;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: #F5E6C8;
+}
+
+.sale-detail-totals > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sale-detail-totals strong {
+    color: #C9A94E;
+    font-family: 'Courier New', monospace;
+    direction: ltr;
+}
+
+.sale-detail-grand {
+    padding-top: 8px;
+    border-top: 2px dashed #C9A94E;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.sale-detail-grand strong {
+    color: #2D8F5E;
+    font-size: 20px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   صندوق إجماليات المشتريات (نسخة من الكاشير)
+   ═══════════════════════════════════════════════════════════ */
+
+#purTotalBox {
+    background: linear-gradient(135deg, #0D0D0D, #1A1A1A);
+    border-radius: 14px;
+    padding: 14px;
+    border: 2px solid #E06060;
+    margin: 12px 0;
+}
+
+#purTotalBox .pos-totals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+#purTotalBox .pos-total-stat {
+    background: #0D0D0D;
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    border: 1px solid #2D2D2D;
+}
+
+#purTotalBox .pos-total-stat.highlight {
+    border-color: #E06060;
+    background: linear-gradient(135deg, #0D0D0D, #1F0D0D);
+}
+
+#purTotalBox .pos-total-label {
+    font-size: 10px;
+    color: #A89070;
+    font-weight: 700;
+}
+
+#purTotalBox .pos-total-value {
+    font-size: 15px;
+    font-weight: 900;
+    color: #C9A94E;
+    font-family: 'Courier New', monospace;
+}
+
+#purTotalBox .pos-total-stat.highlight .pos-total-value {
+    color: #E06060;
+}
+
+#purTotalBox .pos-discount-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+#purTotalBox .pos-delivery-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+    padding: 10px;
+    background: #0D0D0D;
+    border-radius: 10px;
+    border: 1px dashed #3D3D3D;
+}
+
+#purTotalBox .pos-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#purTotalBox .pos-field label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #A89070;
+}
+
+#purTotalBox .pos-input,
+#purTotalBox .pos-select {
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 2px solid #3D3D3D;
+    background: #0D0D0D;
+    color: #F5E6C8;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#purTotalBox .pos-input:focus,
+#purTotalBox .pos-select:focus {
+    outline: none;
+    border-color: #E06060;
+}
+
+#purTotalBox .pos-grand-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    color: #fff;
+    font-weight: 900;
+}
+
+#purTotalBox .pos-grand-total strong {
+    font-size: 22px;
+    font-family: 'Courier New', monospace;
+    direction: ltr;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    #purTotalBox .pos-totals-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    #purTotalBox .pos-discount-grid,
+    #purTotalBox .pos-delivery-row {
+        grid-template-columns: 1fr;
+    }
+    .sale-detail-items-header,
+    .sale-detail-item {
+        grid-template-columns: 25px 2fr 1.5fr 1fr;
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+    .last-sale-item {
+        padding: 10px 10px;
+    }
+    .last-sale-total {
+        font-size: 14px;
+    }
+}
+   
+   
