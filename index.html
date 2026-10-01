@@ -43,20 +43,33 @@
     <div id="appContent" style="display:none;">
 
         <header class="top-header">
-            <div class="logo-icon"><i class="fas fa-scale-balanced"></i></div>
-            <div class="header-text">
-                <h1>الميزان</h1>
-                <div class="sub-title" id="headerCompanyName">نظام محاسبة</div>
-            </div>
-            <div class="header-actions">
-                <span class="user-badge" id="currentUserBadge">
-                    <i class="fas fa-user-circle"></i>
-                    <span id="currentUserName">-</span>
-                </span>
-                <span id="liveDateTime" class="clock">--/--/---- --:--:--</span>
-                <button class="lock-btn" onclick="lockApp()" title="قفل">
-                    <i class="fas fa-lock"></i>
-                </button>
+        <header class="top-header">
+    <!-- الصف الأول: اللوجو + الاسم + أزرار -->
+    <div class="header-top">
+        <div class="logo-icon">
+            <i class="fas fa-scale-balanced"></i>
+        </div>
+        <div class="header-text">
+            <h1>الميزان</h1>
+            <div class="sub-title" id="headerCompanyName">نظام محاسبة</div>
+        </div>
+        <div class="header-controls">
+            <span id="liveDateTime" class="clock">--/--/---- --:--:--</span>
+            <button class="lock-btn" onclick="lockApp()" title="قفل">
+                <i class="fas fa-lock"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- الصف الثاني: المستخدم + المزامنة -->
+    <div class="header-info">
+        <span class="user-badge" id="currentUserBadge">
+            <i class="fas fa-user-circle"></i>
+            <span id="currentUserName">-</span>
+        </span>
+        <span id="syncStatus"></span>
+    </div>
+</header>
             </div>
         </header>
 
