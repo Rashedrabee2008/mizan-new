@@ -1206,9 +1206,16 @@
     <script src="charts.js"></script>
     <script src="loyalty.js"></script>
     <script src="hr.js"></script>
-    <script src="dashboard-fix.js"></script>
     
+    <!-- 🚀 تحسينات الأداء والأمان -->
+    <script src="performance-boost.js"></script>
+    <script src="security-boost.js"></script>
+    <script src="ux-boost.js"></script>
+    <script src="data-integrity.js"></script>
+    <script src="dashboard-fix.js"></script>
+        
     <script>
+    // Service Worker cleanup
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
             regs.forEach(function(reg) { reg.unregister(); });
@@ -1219,10 +1226,9 @@
         setTimeout(function() {
             if (typeof upgradeUserPasswords === 'function') upgradeUserPasswords();
             console.log('🔒 نظام الأمان جاهز');
+            console.log('🚀 كل التحسينات جاهزة - التطبيق بأعلى أداء!');
         }, 3000);
     });
     </script>
-</body>
-</html>
 </body>
 </html>
