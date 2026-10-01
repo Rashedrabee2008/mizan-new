@@ -1207,7 +1207,8 @@
     <script src="loyalty.js"></script>
     <script src="hr.js"></script>
     
-    
+    <!-- ✨ محرك محاسبي كامل -->
+    <script src="accounting-engine.js"></script>
         
     <script>
     if ('serviceWorker' in navigator) {
@@ -1215,12 +1216,10 @@
             regs.forEach(function(reg) { reg.unregister(); });
         });
     }
-    
     window.addEventListener('load', function() {
         setTimeout(function() {
             if (typeof upgradeUserPasswords === 'function') upgradeUserPasswords();
             console.log('🔒 نظام الأمان جاهز');
-            console.log('🚀 كل التحسينات جاهزة');
         }, 3000);
     });
     </script>
