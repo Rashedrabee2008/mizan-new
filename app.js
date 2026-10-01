@@ -1,8 +1,8 @@
 // ============================================================
-// الميزان 16.2.0 - app.js (النسخة الكاملة النهائية)
+// الميزان 16.3.0 - app.js (النسخة الكاملة - المخازن مربوطة)
 // ============================================================
 
-console.log('🚀 تحميل app.js v16.2.0');
+console.log('🚀 تحميل app.js v16.3.0');
 
 // ═══════════════════════════════════════════════════════════
 // Firebase Configuration
@@ -37,6 +37,10 @@ window.users = [];
 window.accounts = [];
 window.journalEntries = [];
 window.coupons = [];
+window.warehouses = [];
+window.employees = [];
+window.attendance = [];
+window.salaries = [];
 window.currentSaleItems = [];
 window.currentPurItems = [];
 window.currentRetItems = [];
@@ -55,7 +59,7 @@ window.autoSyncInterval = null;
 window.autoSyncDebounce = null;
 
 // ═══════════════════════════════════════════════════════════
-// أدوات مساعدة (احتياطي - fixes.js يعرفها)
+// أدوات مساعدة
 // ═══════════════════════════════════════════════════════════
 if (typeof window.$ !== 'function') {
     window.$ = function(id) { return document.getElementById(id); };
@@ -244,14 +248,40 @@ window.createJournalEntry = function(date, description, lines, reference) {
 };
 
 // ═══════════════════════════════════════════════════════════
+// تعبئة قوائم المستودعات في كل الأقسام
+// ═══════════════════════════════════════════════════════════
+window.populateWarehouseField = function() {
+    const warehouses = window.warehouses || [];
+    
+    const ids = ['saleWarehouse', 'purWarehouse', 'retWarehouse'];
+    
+    ids.forEach(function(id) {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const cv = sel.value;
+        let html = '<option value="">اختر المستودع...</option>';
+        warehouses.forEach(function(w) {
+            if (w.active !== false) {
+                html += '<option value="' + w.id + '">' + w.name + '</option>';
+            }
+        });
+        sel.innerHTML = html;
+        
+        if (cv) {
+            sel.value = cv;
+        } else {
+            const mainWh = warehouses.find(function(w) { return w.type === 'main'; }) || warehouses[0];
+            if (mainWh) sel.value = mainWh.id;
+        }
+    });
+};
+
+// ═══════════════════════════════════════════════════════════
 // Firebase Functions
 // ═══════════════════════════════════════════════════════════
 window.initFirebase = function() {
     try {
-        if (typeof firebase === 'undefined') {
-            console.warn('⚠️ Firebase SDK غير محمّل');
-            return false;
-        }
+        if (typeof firebase === 'undefined') return false;
         if (!firebase.apps || firebase.apps.length === 0) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -273,10 +303,7 @@ window.getFirebaseRef = function() {
 
 window.syncToCloud = function() {
     const ref = getFirebaseRef();
-    if (!ref) {
-        console.warn('⚠️ Firebase غير متصل');
-        return;
-    }
+    if (!ref) { console.warn('⚠️ Firebase غير متصل'); return; }
 
     const data = {
         products: products, sales: sales, purchases: purchases,
@@ -287,7 +314,7 @@ window.syncToCloud = function() {
         companyData: companyData, vatSettings: vatSettings,
         lastSync: new Date().toISOString(),
         syncedBy: currentUser ? currentUser.name : 'unknown',
-        version: '16.2.0'
+        version: '16.3.0'
     };
 
     function cleanForFirebase(obj) {
@@ -312,7 +339,6 @@ window.syncToCloud = function() {
         .then(function() {
             localStorage.setItem('mizan_last_sync', new Date().toLocaleString('ar-EG'));
             if (typeof showToast === 'function') showToast('☁️ تم الرفع للسحابة', 'success');
-            console.log('✅ تم الرفع للسحابة');
         })
         .catch(function(err) {
             console.error('❌ فشل الرفع:', err);
@@ -322,17 +348,11 @@ window.syncToCloud = function() {
 
 window.syncFromCloud = function(silent) {
     const ref = getFirebaseRef();
-    if (!ref) {
-        if (typeof showToast === 'function') showToast('❌ Firebase غير متصل', 'error');
-        return;
-    }
+    if (!ref) { if (typeof showToast === 'function') showToast('❌ Firebase غير متصل', 'error'); return; }
     if (!silent && !confirm('⚠️ سيتم استبدال البيانات. متابعة؟')) return;
 
     ref.once('value').then(function(snapshot) {
-        if (!snapshot.exists()) {
-            if (typeof showToast === 'function') showToast('ℹ️ لا توجد بيانات في السحابة', 'info');
-            return;
-        }
+        if (!snapshot.exists()) { if (typeof showToast === 'function') showToast('ℹ️ لا توجد بيانات في السحابة', 'info'); return; }
         const data = snapshot.val();
         if (data.products) window.products = toArray(data.products);
         if (data.sales) window.sales = toArray(data.sales);
@@ -353,16 +373,12 @@ window.syncFromCloud = function(silent) {
         saveAll();
         refreshAllUI();
         if (!silent) showToast('✅ تم التحميل من السحابة', 'success');
-        console.log('✅ تم التحميل من السحابة');
     }).catch(function(err) {
         console.error('❌ فشل التحميل:', err);
-        if (typeof showToast === 'function') showToast('❌ فشل التحميل', 'error');
     });
 };
 
-window.downloadFromCloud = function() {
-    syncFromCloud(false);
-};
+window.downloadFromCloud = function() { syncFromCloud(false); };
 
 window.syncUsersFromCloud = function() {
     if (!window.firebaseReady) return;
@@ -389,10 +405,7 @@ window.startAutoSync = function() {
 };
 
 window.stopAutoSync = function() {
-    if (autoSyncInterval) {
-        clearInterval(autoSyncInterval);
-        autoSyncInterval = null;
-    }
+    if (autoSyncInterval) { clearInterval(autoSyncInterval); autoSyncInterval = null; }
 };
 
 window.scheduleAutoSync = function() {
@@ -450,6 +463,7 @@ window.navigateTo = function(page) {
         populateSaleProducts();
         populateSaleCustomers();
         populateCashBoxDropdowns();
+        populateWarehouseField();
         renderCashier();
         updateSaleTotals();
         updateSalePrice();
@@ -458,6 +472,7 @@ window.navigateTo = function(page) {
         populatePurProducts();
         populatePurSuppliers();
         populateCashBoxDropdowns();
+        populateWarehouseField();
         renderPurItems();
         updatePurTotals();
         renderPurchases();
@@ -480,6 +495,7 @@ window.navigateTo = function(page) {
         toggleReturnParty();
         populateRetProducts();
         populateCashBoxDropdowns();
+        populateWarehouseField();
         updateReturnsStats();
         renderReturns();
     }
@@ -500,13 +516,16 @@ window.navigateTo = function(page) {
         if (typeof renderWarehouseAdjustments === 'function') renderWarehouseAdjustments();
         if (typeof renderOpeningBalances === 'function') renderOpeningBalances();
     }
+    if (page === 'employees') {
+        if (typeof renderEmployees === 'function') renderEmployees();
+    }
     if (page === 'reports') renderReport(currentReport);
     if (page === 'users') renderUsers();
     if (page === 'settings') renderSettings();
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-// ═══════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════
 // المنتجات
 // ═══════════════════════════════════════════════════════════
 window.saveProduct = function() {
@@ -590,10 +609,10 @@ window.renderProducts = function() {
         c.innerHTML = '<div class="empty-state"><i class="fas fa-box"></i><span>لا توجد منتجات</span></div>';
         return;
     }
-    let html = '<div class="table-header" style="grid-template-columns: 1.5fr 0.8fr 0.8fr 0.8fr 1.2fr;"><span>الاسم</span><span>الشراء</span><span>البيع</span><span>الكمية</span><span></span></div>';
+    let html = '<div class="table-header" style="grid-template-columns: 1.4fr 0.7fr 0.7fr 0.7fr 1.4fr;"><span>الاسم</span><span>الشراء</span><span>البيع</span><span>الكمية</span><span></span></div>';
     filtered.forEach(function(p) {
         const qtyColor = p.qty > (p.min || 5) ? '#C9A94E' : '#E06060';
-        html += '<div class="table-row" style="grid-template-columns: 1.5fr 0.8fr 0.8fr 0.8fr 1.2fr;">' +
+        html += '<div class="table-row" style="grid-template-columns: 1.4fr 0.7fr 0.7fr 0.7fr 1.4fr;">' +
             '<span><strong>' + p.name + '</strong>' +
                 (p.barcode ? '<br><small style="color:#A89070;font-size:9px;">' + p.barcode + '</small>' : '') +
             '</span>' +
@@ -612,7 +631,7 @@ window.renderProducts = function() {
 };
 
 window.showProductWarehouses = function(productId) {
-    const product = window.products.find(p => p.id == productId);
+    const product = window.products.find(function(p) { return p.id == productId; });
     if (!product) return;
     
     let html = '<button class="modal-close" onclick="closeModal()">&times;</button>' +
@@ -621,30 +640,58 @@ window.showProductWarehouses = function(productId) {
     html += '<div style="background:linear-gradient(135deg,#C9A94E,#B8953A);border-radius:10px;padding:14px;text-align:center;color:#0D0D0D;margin-bottom:12px;">' +
         '<div style="font-size:11px;opacity:0.8;">الإجمالي</div>' +
         '<div style="font-size:28px;font-weight:900;">' + product.qty + '</div>' +
+        '<div style="font-size:11px;">قطعة</div>' +
     '</div>';
-    
+
     let hasDistribution = false;
+    let totalDistributed = 0;
+    
     if (product.warehouseStock && Object.keys(product.warehouseStock).length > 0) {
-        Object.keys(product.warehouseStock).forEach(function(whId) {
-            const wh = window.warehouses ? window.warehouses.find(w => w.id == whId) : null;
-            const qty = product.warehouseStock[whId];
+        (window.warehouses || []).forEach(function(wh) {
+            const qty = product.warehouseStock[wh.id] || 0;
             if (qty > 0) {
                 hasDistribution = true;
-                html += '<div style="background:#0D0D0D;border-radius:8px;padding:10px;margin-bottom:6px;border-right:3px solid #4A8AB5;">' +
-                    '<div style="display:flex;justify-content:space-between;">' +
-                        '<span style="color:#F5E6C8;">🏭 ' + (wh ? wh.name : 'مستودع ' + whId) + '</span>' +
-                        '<strong style="color:#4A8AB5;">' + qty + ' قطعة</strong>' +
+                totalDistributed += qty;
+                const percentage = product.qty > 0 ? (qty / product.qty) * 100 : 0;
+                
+                html += '<div style="background:#0D0D0D;border-radius:10px;padding:12px;margin-bottom:8px;border-right:4px solid #4A8AB5;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+                        '<div style="display:flex;align-items:center;gap:8px;">' +
+                            '<span style="font-size:20px;">🏭</span>' +
+                            '<div>' +
+                                '<div style="color:#C9A94E;font-weight:900;font-size:13px;">' + wh.name + '</div>' +
+                                '<div style="color:#A89070;font-size:10px;">' + (wh.type === 'main' ? 'رئيسي' : wh.type === 'branch' ? 'فرع' : 'مخزن') + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="text-align:left;">' +
+                            '<div style="color:#4A8AB5;font-weight:900;font-size:18px;">' + qty + '</div>' +
+                            '<div style="color:#A89070;font-size:9px;">قطعة</div>' +
+                        '</div>' +
                     '</div>' +
+                    '<div style="background:#1A1A1A;height:6px;border-radius:3px;overflow:hidden;">' +
+                        '<div style="background:#4A8AB5;height:100%;width:' + percentage + '%;"></div>' +
+                    '</div>' +
+                    '<div style="text-align:center;font-size:10px;color:#5D5D5D;margin-top:4px;">' + percentage.toFixed(1) + '% من الإجمالي</div>' +
                 '</div>';
             }
         });
     }
     
     if (!hasDistribution) {
-        html += '<div style="text-align:center;padding:20px;color:#A89070;">' +
-            'لا يوجد توزيع مسجل<br>' +
-            '<small>المنتج في المخزون العام</small>' +
+        html += '<div style="text-align:center;padding:20px;color:#A89070;background:#0D0D0D;border-radius:10px;">' +
+            '⚠️ لا يوجد توزيع مسجل<br>' +
+            '<small style="color:#5D5D5D;">المنتج موجود بالإجمالي فقط</small>' +
         '</div>';
+    } else {
+        const remaining = product.qty - totalDistributed;
+        if (Math.abs(remaining) > 0.01) {
+            html += '<div style="background:#2D0D0D;border-radius:8px;padding:10px;margin-top:6px;border-right:3px solid #E06060;">' +
+                '<div style="display:flex;justify-content:space-between;font-size:11px;">' +
+                    '<span style="color:#E06060;">⚠️ غير موزع</span>' +
+                    '<strong style="color:#E06060;">' + remaining + ' قطعة</strong>' +
+                '</div>' +
+            '</div>';
+        }
     }
     
     html += '<button class="btn btn-secondary btn-block" onclick="closeModal()" style="margin-top:12px;">إغلاق</button>';
@@ -1051,7 +1098,7 @@ window.showCashBoxDetails = function(boxId) {
 };
 
 window.populateCashBoxDropdowns = function() {
-    const ids = ['saleCashBox', 'purCashBox', 'expCashBox', 'manualCashBox', 'collectCashBox', 'payCashBox', 'retCashBox'];
+    const ids = ['saleCashBox', 'purCashBox', 'expCashBox', 'manualCashBox', 'collectCashBox', 'payCashBox', 'retCashBox', 'salCashBox'];
     const defaultBox = getDefaultCashBox();
 
     ids.forEach(function(id) {
@@ -1120,10 +1167,25 @@ window.addSaleItem = function() {
     if (price <= 0) price = p.sell;
     if (qty <= 0) qty = 1;
 
-    const ex = currentSaleItems.find(function(i) { return i.productId == id; });
-    const totalQty = qty + (ex ? ex.qty : 0);
-    if (totalQty > p.qty) { showToast('⚠️ المتاح: ' + p.qty, 'error'); return; }
+    // ✅ التحقق من المستودع المختار
+    const saleWarehouseId = $('saleWarehouse') ? $('saleWarehouse').value : '';
+    if (saleWarehouseId) {
+        const whQty = (p.warehouseStock && p.warehouseStock[saleWarehouseId]) || 0;
+        const existingItem = currentSaleItems.find(function(i) { return i.productId == id; });
+        const totalRequested = qty + (existingItem ? existingItem.qty : 0);
+        
+        if (totalRequested > whQty) {
+            const warehouse = (window.warehouses || []).find(function(w) { return w.id == saleWarehouseId; });
+            showToast('⚠️ المتاح في ' + (warehouse ? warehouse.name : 'المستودع') + ': ' + whQty, 'error');
+            return;
+        }
+    } else {
+        const existingItem = currentSaleItems.find(function(i) { return i.productId == id; });
+        const totalRequested = qty + (existingItem ? existingItem.qty : 0);
+        if (totalRequested > p.qty) { showToast('⚠️ المتاح: ' + p.qty, 'error'); return; }
+    }
 
+    const ex = currentSaleItems.find(function(i) { return i.productId == id; });
     if (ex) {
         ex.qty += qty;
         ex.price = price;
@@ -1177,7 +1239,7 @@ window.renderCashier = function() {
 };
 
 // ═══════════════════════════════════════════════════════════
-// updateSaleTotals - النسخة النهائية مع الكوبون والنقاط
+// updateSaleTotals - مع الكوبون والنقاط
 // ═══════════════════════════════════════════════════════════
 window.updateSaleTotals = function() {
     const subtotal = currentSaleItems.reduce(function(s, i) { return s + i.total; }, 0);
@@ -1186,7 +1248,6 @@ window.updateSaleTotals = function() {
     const isTax = invoiceType === 'tax';
     const vat = isTax ? (subtotal * (vatSettings.defaultVAT / 100)) : 0;
 
-    // الخصم العادي
     const discountValue = parseFloat($('saleDiscount') ? $('saleDiscount').value : 0) || 0;
     const discountType = $('saleDiscountType') ? $('saleDiscountType').value : 'fixed';
     let discount = 0;
@@ -1196,7 +1257,6 @@ window.updateSaleTotals = function() {
         discount = discountValue;
     }
 
-    // خصم المستوى
     const levelDiscountValue = parseFloat($('saleLevelDiscount') ? $('saleLevelDiscount').value : 0) || 0;
     const levelDiscountType = $('saleLevelDiscountType') ? $('saleLevelDiscountType').value : 'fixed';
     let levelDiscount = 0;
@@ -1206,16 +1266,12 @@ window.updateSaleTotals = function() {
         levelDiscount = levelDiscountValue;
     }
 
-    // ✅ خصم الكوبون
     let couponDiscount = 0;
     if (window.currentCoupon && typeof window.validateCoupon === 'function') {
         const validation = window.validateCoupon(window.currentCoupon, subtotal);
-        if (validation.valid) {
-            couponDiscount = validation.discount;
-        }
+        if (validation.valid) couponDiscount = validation.discount;
     }
 
-    // ✅ خصم النقاط
     let pointsDiscount = 0;
     if (window.currentPointsToRedeem > 0 && window.LOYALTY_CONFIG) {
         pointsDiscount = window.currentPointsToRedeem * window.LOYALTY_CONFIG.POINT_VALUE;
@@ -1243,17 +1299,29 @@ window.updateInvoiceHeader = function() {
 };
 
 // ═══════════════════════════════════════════════════════════
-// saveSale - النسخة النهائية مع الكوبون والنقاط
+// saveSale - مربوطة بالمستودع
 // ═══════════════════════════════════════════════════════════
 window.saveSale = function() {
     if (!canAdd()) { showToast('⚠️ لا تملك صلاحية', 'error'); return; }
     if (currentSaleItems.length === 0) { showToast('⚠️ لا توجد أصناف', 'error'); return; }
 
+    // ✅ قراءة المستودع
+    const saleWarehouseId = $('saleWarehouse') ? $('saleWarehouse').value : '';
+    const saleWarehouse = (window.warehouses || []).find(function(w) { return w.id == saleWarehouseId; });
+    
+    if (!saleWarehouseId) { showToast('⚠️ اختر المستودع', 'error'); return; }
+
+    // ✅ التحقق من الكميات في المستودع
     for (let i = 0; i < currentSaleItems.length; i++) {
         const it = currentSaleItems[i];
         const p = products.find(function(pr) { return pr.id == it.productId; });
         if (!p) { showToast('⚠️ المنتج غير موجود', 'error'); return; }
-        if (p.qty < it.qty) { showToast('⚠️ الكمية غير كافية: ' + it.name, 'error'); return; }
+        
+        const whQty = (p.warehouseStock && p.warehouseStock[saleWarehouseId]) || 0;
+        if (whQty < it.qty) {
+            showToast('⚠️ الكمية غير كافية في ' + (saleWarehouse ? saleWarehouse.name : 'المستودع') + ': ' + p.name + ' (متاح: ' + whQty + ')', 'error');
+            return;
+        }
     }
 
     const customer = $('saleCustomer') ? $('saleCustomer').value : 'عميل نقدي';
@@ -1287,7 +1355,6 @@ window.saveSale = function() {
         levelDiscount = levelDiscountValue;
     }
 
-    // ✅ خصم الكوبون
     let couponDiscount = 0;
     let couponCode = null;
     if (window.currentCoupon && typeof window.validateCoupon === 'function') {
@@ -1298,7 +1365,6 @@ window.saveSale = function() {
         }
     }
 
-    // ✅ خصم النقاط
     let pointsDiscount = 0;
     let redeemedPoints = 0;
     if (window.currentPointsToRedeem > 0 && window.LOYALTY_CONFIG) {
@@ -1307,18 +1373,27 @@ window.saveSale = function() {
     }
 
     const total = Math.max(0, subtotal + vat - discount - levelDiscount - couponDiscount - pointsDiscount);
-
     const today = getTodayDate();
     let cogsTotal = 0;
 
+    // ✅ الخصم من المخزون + المستودع
     currentSaleItems.forEach(function(it) {
         const p = products.find(function(pr) { return pr.id == it.productId; });
-        if (p) { it.costPrice = p.buy; cogsTotal += p.buy * it.qty; p.qty -= it.qty; }
+        if (p) { 
+            it.costPrice = p.buy; 
+            cogsTotal += p.buy * it.qty; 
+            p.qty -= it.qty;
+            
+            if (!p.warehouseStock) p.warehouseStock = {};
+            p.warehouseStock[saleWarehouseId] = Math.max(0, (p.warehouseStock[saleWarehouseId] || 0) - it.qty);
+        }
     });
 
     const isCash = ['cash', 'wallet', 'visa', 'bank'].indexOf(paymentMethod) > -1;
     const inv = {
         id: Date.now(), number: sales.length + 1,
+        warehouseId: saleWarehouseId,
+        warehouseName: saleWarehouse ? saleWarehouse.name : '',
         customer: customer,
         customerId: (customers.find(function(c) { return c.name === customer; }) || {}).id || null,
         seller: seller, delivery: delivery, shipping: shipping,
@@ -1340,7 +1415,6 @@ window.saveSale = function() {
     };
     sales.push(inv);
 
-    // استخدام الكوبون
     if (window.currentCoupon && typeof window.useCoupon === 'function') {
         window.useCoupon(window.currentCoupon.id);
     }
@@ -1407,7 +1481,6 @@ window.saveSale = function() {
         }
     });
 
-    // إعادة تعيين
     currentSaleItems = [];
     window.currentCoupon = null;
     window.currentPointsToRedeem = 0;
@@ -1419,16 +1492,14 @@ window.saveSale = function() {
     if ($('saleCouponCode')) $('saleCouponCode').value = '';
     if ($('redeemPointsInput')) $('redeemPointsInput').value = '';
     
-    const couponBox = $('couponInfoBox');
-    if (couponBox) couponBox.style.display = 'none';
-    const redeemInfo = $('redeemedPointsInfo');
-    if (redeemInfo) redeemInfo.style.display = 'none';
-    const pointsBox = $('customerPointsBox');
-    if (pointsBox) pointsBox.style.display = 'none';
+    const couponBox = $('couponInfoBox'); if (couponBox) couponBox.style.display = 'none';
+    const redeemInfo = $('redeemedPointsInfo'); if (redeemInfo) redeemInfo.style.display = 'none';
+    const pointsBox = $('customerPointsBox'); if (pointsBox) pointsBox.style.display = 'none';
     
     setRadioValue('salePaymentMethod', 'cash');
     setRadioValue('saleInvoiceType', 'simple');
 
+    populateWarehouseField();
     renderCashier();
     updateSaleTotals();
     populateSaleProducts();
@@ -1438,7 +1509,7 @@ window.saveSale = function() {
     renderCashBoxes();
     if (typeof renderCustomers === 'function') renderCustomers();
 
-    showToast('✅ فاتورة #' + inv.number + ' - ' + formatMoney(total) + (isCash ? ' 💵' : ' 📝 آجل'), 'success');
+    showToast('✅ فاتورة #' + inv.number + ' - ' + formatMoney(total) + ' (من ' + (saleWarehouse ? saleWarehouse.name : '') + ')', 'success');
     scheduleAutoSync();
 };
 
@@ -1458,7 +1529,7 @@ window.clearSale = function() {
     showToast('🗑️ تم الإلغاء', 'info');
 };
         // ═══════════════════════════════════════════════════════════
-// المشتريات
+// المشتريات - مربوطة بالمستودع
 // ═══════════════════════════════════════════════════════════
 window.populatePurProducts = function() {
     const sel = $('purProduct');
@@ -1570,6 +1641,12 @@ window.savePurchase = function() {
     const supplierName = $('purSupplier') ? $('purSupplier').value : '';
     if (!supplierName) { showToast('⚠️ اختر مورد', 'error'); return; }
 
+    // ✅ قراءة المستودع
+    const purWarehouseId = $('purWarehouse') ? $('purWarehouse').value : '';
+    const purWarehouse = (window.warehouses || []).find(function(w) { return w.id == purWarehouseId; });
+    
+    if (!purWarehouseId) { showToast('⚠️ اختر المستودع', 'error'); return; }
+
     const payment = $('purPayment') ? $('purPayment').value : 'cash';
     const cashBoxId = ($('purCashBox') ? $('purCashBox').value : '') || (getDefaultCashBox() ? getDefaultCashBox().id : null);
     const box = getCashBoxById(cashBoxId);
@@ -1577,14 +1654,23 @@ window.savePurchase = function() {
     const subtotal = currentPurItems.reduce(function(s, i) { return s + i.total; }, 0);
     const today = getTodayDate();
 
+    // ✅ الإضافة للمخزون + المستودع
     currentPurItems.forEach(function(it) {
         const p = products.find(function(pr) { return pr.id == it.productId; });
-        if (p) { p.qty += it.qty; p.buy = it.price; }
+        if (p) { 
+            p.qty += it.qty; 
+            p.buy = it.price;
+            
+            if (!p.warehouseStock) p.warehouseStock = {};
+            p.warehouseStock[purWarehouseId] = (p.warehouseStock[purWarehouseId] || 0) + it.qty;
+        }
     });
 
     const isCash = payment === 'cash';
     const inv = {
         id: Date.now(), number: purchases.length + 1,
+        warehouseId: purWarehouseId,
+        warehouseName: purWarehouse ? purWarehouse.name : '',
         supplierName: supplierName, notes: notes, subtotal: subtotal, total: subtotal,
         payment: payment, cashBoxId: cashBoxId, cashBoxName: box ? box.name : '',
         paidAmount: isCash ? subtotal : 0,
@@ -1641,6 +1727,7 @@ window.savePurchase = function() {
     if ($('purNotes')) $('purNotes').value = '';
     if ($('purPayment')) $('purPayment').value = 'cash';
 
+    populateWarehouseField();
     renderPurItems();
     updatePurTotals();
     renderPurchases();
@@ -1650,7 +1737,7 @@ window.savePurchase = function() {
     renderProducts();
     updateDashboard();
 
-    showToast('✅ فاتورة شراء #' + inv.number, 'success');
+    showToast('✅ فاتورة شراء #' + inv.number + ' → ' + (purWarehouse ? purWarehouse.name : ''), 'success');
     scheduleAutoSync();
 };
 
@@ -1681,12 +1768,14 @@ window.renderPurchases = function() {
         return;
     }
     const sorted = purchases.slice().sort(function(a, b) { return b.id - a.id; }).slice(0, 30);
-    let html = '<div class="table-header" style="grid-template-columns: 0.5fr 1.3fr 1fr 0.8fr 0.8fr 1.2fr;"><span>#</span><span>المورد</span><span>المبلغ</span><span>الدفع</span><span>التاريخ</span><span></span></div>';
+    let html = '<div class="table-header" style="grid-template-columns: 0.5fr 1.2fr 1fr 0.8fr 0.8fr 1.2fr;"><span>#</span><span>المورد</span><span>المبلغ</span><span>الدفع</span><span>التاريخ</span><span></span></div>';
     sorted.forEach(function(inv) {
         const statusLabel = inv.status === 'paid' ? '✅ نقدي' : '📝 آجل';
-        html += '<div class="table-row" style="grid-template-columns: 0.5fr 1.3fr 1fr 0.8fr 0.8fr 1.2fr;">' +
+        html += '<div class="table-row" style="grid-template-columns: 0.5fr 1.2fr 1fr 0.8fr 0.8fr 1.2fr;">' +
             '<span>#' + inv.number + '</span>' +
-            '<span><strong>' + inv.supplierName + '</strong></span>' +
+            '<span><strong>' + inv.supplierName + '</strong>' +
+                (inv.warehouseName ? '<br><small style="color:#A89070;font-size:9px;">🏭 ' + inv.warehouseName + '</small>' : '') +
+            '</span>' +
             '<span style="color:#E06060;font-weight:700;">' + formatMoney(inv.total) + '</span>' +
             '<span style="font-size:10px;">' + statusLabel + '</span>' +
             '<span style="font-size:10px;color:#A89070;">' + inv.date + '</span>' +
@@ -1703,10 +1792,17 @@ window.deletePurchase = function(id) {
     const inv = purchases.find(function(p) { return p.id == id; });
     if (!inv) return;
     if (!confirm('⚠️ حذف فاتورة #' + inv.number + '؟')) return;
+    
     inv.items.forEach(function(it) {
         const p = products.find(function(pr) { return pr.id == it.productId; });
-        if (p) p.qty -= it.qty;
+        if (p) {
+            p.qty -= it.qty;
+            if (inv.warehouseId && p.warehouseStock) {
+                p.warehouseStock[inv.warehouseId] = Math.max(0, (p.warehouseStock[inv.warehouseId] || 0) - it.qty);
+            }
+        }
     });
+    
     window.treasury = treasury.filter(function(t) { return !(t.refType === 'purchase' && t.refId === id); });
     window.purchases = purchases.filter(function(p) { return p.id !== id; });
     window.journalEntries = journalEntries.filter(function(e) { return e.reference !== 'PUR-' + inv.number; });
@@ -1907,7 +2003,7 @@ window.renderTreasury = function() {
     sorted.forEach(function(t) {
         const isDep = t.type === 'deposit';
         const color = isDep ? '#2D8F5E' : '#E06060';
-        const refIcons = { 'sale': '💰', 'purchase': '🛒', 'expense': '💸', 'collect': '💵', 'pay': '💳', 'manual': '✋' };
+        const refIcons = { 'sale': '💰', 'purchase': '🛒', 'expense': '💸', 'collect': '💵', 'pay': '💳', 'manual': '✋', 'salary': '👤' };
         html += '<div class="table-row" style="grid-template-columns: 1.5fr 0.8fr 0.7fr 0.8fr;">' +
             '<span style="font-size:11px;">' + (refIcons[t.refType] || '📋') + ' ' + t.note + '</span>' +
             '<span style="color:' + color + ';font-weight:700;font-size:12px;">' + (isDep ? '+' : '-') + formatMoney(t.amount) + '</span>' +
@@ -1962,10 +2058,12 @@ window.renderInvoices = function() {
     sorted.forEach(function(inv) {
         const statusLabel = inv.status === 'paid' ? '✅' : inv.status === 'partial' ? '⚠️' : '❌';
         const payIcons = { 'cash': '💵', 'credit': '📝', 'wallet': '📱', 'visa': '💳', 'bank': '🏦', 'installment': '📅' };
-        const couponBadge = inv.couponCode ? ' 🎫' : '';
         html += '<div class="table-row" style="grid-template-columns: 0.5fr 1.3fr 1fr 0.8fr 0.7fr 1.5fr;">' +
             '<span>#' + inv.number + '</span>' +
-            '<span>' + (inv.customer || 'عميل نقدي') + couponBadge + '</span>' +
+            '<span>' + (inv.customer || 'عميل نقدي') + 
+                (inv.warehouseName ? '<br><small style="color:#A89070;font-size:9px;">🏭 ' + inv.warehouseName + '</small>' : '') +
+                (inv.couponCode ? ' 🎫' : '') +
+            '</span>' +
             '<span style="color:#2D8F5E;font-weight:700;">' + formatMoney(inv.total) + '</span>' +
             '<span>' + (payIcons[inv.paymentMethod] || '💵') + '</span>' +
             '<span style="font-size:14px;">' + statusLabel + '</span>' +
@@ -2003,6 +2101,7 @@ window.showInvoiceDetails = function(id) {
                 '<div><span style="color:#A89070;">التاريخ:</span> ' + inv.date + ' ' + (inv.time || '') + '</div>' +
                 '<div><span style="color:#A89070;">البائع:</span> ' + (inv.seller || '-') + '</div>' +
                 '<div><span style="color:#A89070;">الحالة:</span> ' + (inv.status === 'paid' ? '✅ مدفوعة' : inv.status === 'partial' ? '⚠️ جزئية' : '❌ غير مدفوعة') + '</div>' +
+                (inv.warehouseName ? '<div style="grid-column:1/-1;color:#4A8AB5;">🏭 المستودع: ' + inv.warehouseName + '</div>' : '') +
             '</div>' +
             '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
                 '<thead><tr style="background:#C9A94E;color:#0D0D0D;">' +
@@ -2033,7 +2132,7 @@ window.showInvoiceDetails = function(id) {
             '<button class="btn btn-primary" onclick="callIfExists(\'showInvoiceQR\', ' + inv.id + ')"><i class="fas fa-qrcode"></i> QR Code</button>' +
             '<button class="btn btn-warning" onclick="callIfExists(\'sendInvoiceWhatsApp\', ' + inv.id + ')"><i class="fab fa-whatsapp"></i> واتساب</button>' +
         '</div>' +
-        '<button class="btn btn-secondary btn-block" onclick="closeModal()" style="margin-top:6px;"><i class="fas fa-times"></i> إغلاق</button>';
+        '<button class="btn btn-secondary btn-block" onclick="closeModal()" style="margin-top:6px;">إغلاق</button>';
     openModal(html);
 };
 
@@ -2070,7 +2169,8 @@ window.printInvoice = function(id) {
         '<div class="info-box"><div><strong>رقم الفاتورة:</strong> #' + inv.number + '<br>' +
         '<strong>التاريخ:</strong> ' + inv.date + '<br><strong>الوقت:</strong> ' + (inv.time || '') + '</div>' +
         '<div><strong>العميل:</strong> ' + (inv.customer || 'عميل نقدي') + '<br>' +
-        '<strong>البائع:</strong> ' + (inv.seller || '-') + '</div></div>' +
+        '<strong>البائع:</strong> ' + (inv.seller || '-') + '<br>' +
+        (inv.warehouseName ? '<strong>المستودع:</strong> ' + inv.warehouseName : '') + '</div></div>' +
         '<table><thead><tr><th>#</th><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead><tbody>' + itemsRows + '</tbody></table>' +
         '<div class="totals"><div><span>المجموع:</span><span>' + formatMoney(inv.subtotal || inv.total) + ' ج.م</span></div>' +
         (inv.vat > 0 ? '<div><span>الضريبة:</span><span>' + formatMoney(inv.vat) + ' ج.م</span></div>' : '') +
@@ -2094,9 +2194,15 @@ window.deleteInvoice = function(id) {
     if (!inv) return;
     if (!confirm('⚠️ حذف فاتورة #' + inv.number + '؟')) return;
 
+    // ✅ إرجاع المخزون للمستودع
     inv.items.forEach(function(it) {
         const p = products.find(function(pr) { return pr.id == it.productId; });
-        if (p) p.qty += it.qty;
+        if (p) { 
+            p.qty += it.qty;
+            if (inv.warehouseId && p.warehouseStock) {
+                p.warehouseStock[inv.warehouseId] = (p.warehouseStock[inv.warehouseId] || 0) + it.qty;
+            }
+        }
     });
 
     window.treasury = treasury.filter(function(t) { return !(t.refType === 'sale' && t.refId === id); });
@@ -2455,8 +2561,8 @@ window.printReceipt = function(id) {
     const w = window.open('', '_blank');
     if (w) { w.document.write(content); w.document.close(); }
 };
-// ═══════════════════════════════════════════════════════════
-// المرتجعات
+    // ═══════════════════════════════════════════════════════════
+// المرتجعات - مربوطة بالمستودع
 // ═══════════════════════════════════════════════════════════
 window.toggleReturnParty = function() {
     const type = $('retType') ? $('retType').value : 'sale';
@@ -2565,21 +2671,39 @@ window.saveReturn = function() {
     const cashBoxId = $('retCashBox') ? $('retCashBox').value : '';
     if (!cashBoxId) { showToast('⚠️ اختر الخزنة', 'error'); return; }
 
+    // ✅ قراءة المستودع
+    const retWarehouseId = $('retWarehouse') ? $('retWarehouse').value : '';
+    const retWarehouse = (window.warehouses || []).find(function(w) { return w.id == retWarehouseId; });
+    
+    if (!retWarehouseId) { showToast('⚠️ اختر المستودع', 'error'); return; }
+
     const box = getCashBoxById(cashBoxId);
     const notes = $('retNotes') ? $('retNotes').value.trim() : '';
     const total = currentRetItems.reduce(function(s, i) { return s + i.total; }, 0);
     const today = getTodayDate();
 
+    // ✅ تعديل المخزون + المستودع
     currentRetItems.forEach(function(it) {
         const p = products.find(function(pr) { return pr.id == it.productId; });
         if (p) {
-            if (type === 'sale') p.qty += it.qty;
-            else p.qty = Math.max(0, p.qty - it.qty);
+            if (type === 'sale') {
+                // مرتجع بيع: زيادة في المخزون + المستودع
+                p.qty += it.qty;
+                if (!p.warehouseStock) p.warehouseStock = {};
+                p.warehouseStock[retWarehouseId] = (p.warehouseStock[retWarehouseId] || 0) + it.qty;
+            } else {
+                // مرتجع شراء: خصم من المخزون + المستودع
+                p.qty = Math.max(0, p.qty - it.qty);
+                if (!p.warehouseStock) p.warehouseStock = {};
+                p.warehouseStock[retWarehouseId] = Math.max(0, (p.warehouseStock[retWarehouseId] || 0) - it.qty);
+            }
         }
     });
 
     const ret = {
         id: Date.now(), number: returns.length + 1, type: type, party: party,
+        warehouseId: retWarehouseId,
+        warehouseName: retWarehouse ? retWarehouse.name : '',
         cashBoxId: cashBoxId, cashBoxName: box ? box.name : '',
         notes: notes, total: total, items: JSON.parse(JSON.stringify(currentRetItems)),
         date: today, time: getNowTime(),
@@ -2682,6 +2806,7 @@ window.saveReturn = function() {
     if ($('retParty')) $('retParty').value = '';
     if ($('retNotes')) $('retNotes').value = '';
 
+    populateWarehouseField();
     renderRetItems();
     renderReturns();
     updateReturnsStats();
@@ -2692,7 +2817,7 @@ window.saveReturn = function() {
     renderSuppliers();
     populateSaleProducts();
 
-    showToast('✅ مرتجع #' + ret.number, 'success');
+    showToast('✅ مرتجع #' + ret.number + ' → ' + (retWarehouse ? retWarehouse.name : ''), 'success');
     scheduleAutoSync();
 };
 
@@ -2727,7 +2852,9 @@ window.renderReturns = function() {
         html += '<div class="table-row" style="grid-template-columns: 0.5fr 0.8fr 1.3fr 1fr 1fr 1.2fr;">' +
             '<span>#' + r.number + '</span>' +
             '<span style="color:' + color + ';font-size:11px;font-weight:700;">' + (isSale ? '🔄 بيع' : '🔄 شراء') + '</span>' +
-            '<span>' + r.party + '</span>' +
+            '<span>' + r.party +
+                (r.warehouseName ? '<br><small style="color:#A89070;font-size:9px;">🏭 ' + r.warehouseName + '</small>' : '') +
+            '</span>' +
             '<span style="color:' + color + ';font-weight:700;">' + formatMoney(r.total) + '</span>' +
             '<span style="font-size:10px;color:#A89070;">' + r.date + '</span>' +
             '<button class="btn btn-danger btn-sm" onclick="deleteReturn(' + r.id + ')"><i class="fas fa-trash"></i></button>' +
@@ -2741,13 +2868,25 @@ window.deleteReturn = function(id) {
     const ret = returns.find(function(r) { return r.id == id; });
     if (!ret) return;
     if (!confirm('⚠️ حذف مرتجع #' + ret.number + '؟')) return;
+    
+    // ✅ عكس التأثير
     ret.items.forEach(function(it) {
         const p = products.find(function(pr) { return pr.id == it.productId; });
         if (p) {
-            if (ret.type === 'sale') p.qty -= it.qty;
-            else p.qty += it.qty;
+            if (ret.type === 'sale') {
+                p.qty -= it.qty;
+                if (ret.warehouseId && p.warehouseStock) {
+                    p.warehouseStock[ret.warehouseId] = Math.max(0, (p.warehouseStock[ret.warehouseId] || 0) - it.qty);
+                }
+            } else {
+                p.qty += it.qty;
+                if (ret.warehouseId && p.warehouseStock) {
+                    p.warehouseStock[ret.warehouseId] = (p.warehouseStock[ret.warehouseId] || 0) + it.qty;
+                }
+            }
         }
     });
+    
     window.treasury = treasury.filter(function(t) { return !(t.refType === 'return' && t.refId === id); });
     window.journalEntries = journalEntries.filter(function(e) { return e.reference !== 'RET-' + ret.number; });
     window.returns = returns.filter(function(r) { return r.id !== id; });
@@ -3107,11 +3246,13 @@ window.updateDashboard = function() {
         return;
     }
     const last5 = sales.slice().sort(function(a, b) { return b.id - a.id; }).slice(0, 5);
-    let html = '<div class="table-header" style="grid-template-columns: 0.5fr 1.5fr 1fr 1fr;"><span>#</span><span>العميل</span><span>المبلغ</span><span>الربح</span></div>';
+    let html = '<div class="table-header" style="grid-template-columns: 0.5fr 1.3fr 1fr 1fr;"><span>#</span><span>العميل</span><span>المبلغ</span><span>الربح</span></div>';
     last5.forEach(function(inv) {
-        html += '<div class="table-row" style="grid-template-columns: 0.5fr 1.5fr 1fr 1fr;">' +
+        html += '<div class="table-row" style="grid-template-columns: 0.5fr 1.3fr 1fr 1fr;">' +
             '<span>#' + inv.number + '</span>' +
-            '<span style="font-size:11px;">' + (inv.customer || 'عميل نقدي') + '</span>' +
+            '<span style="font-size:11px;">' + (inv.customer || 'عميل نقدي') +
+                (inv.warehouseName ? '<br><small style="color:#A89070;font-size:9px;">🏭 ' + inv.warehouseName + '</small>' : '') +
+            '</span>' +
             '<span style="color:#2D8F5E;font-weight:700;">' + formatMoney(inv.total) + '</span>' +
             '<span style="color:#C9A94E;font-weight:700;">' + formatMoney(inv.profit || 0) + '</span>' +
         '</div>';
@@ -3150,7 +3291,7 @@ window.saveCompanySettings = function() {
 
 window.exportData = function() {
     const data = {
-        version: '16.2.0', exportDate: new Date().toISOString(),
+        version: '16.3.0', exportDate: new Date().toISOString(),
         products: products, sales: sales, purchases: purchases,
         customers: customers, suppliers: suppliers, cashBoxes: cashBoxes,
         expenses: expenses, treasury: treasury, payments: payments,
@@ -3367,6 +3508,7 @@ window.refreshAllUI = function() {
     populatePurProducts();
     populatePurSuppliers();
     populateCashBoxDropdowns();
+    populateWarehouseField();
     populateCollectCustomers();
     populatePaySuppliers();
     populateRetProducts();
@@ -3380,7 +3522,7 @@ window.refreshAllUI = function() {
 };
 
 window.init = function() {
-    console.log('🚀 بدء التهيئة v16.2.0...');
+    console.log('🚀 بدء التهيئة v16.3.0...');
 
     window.products = toArray(getData('products', []));
     window.sales = toArray(getData('sales', []));
@@ -3443,6 +3585,7 @@ window.init = function() {
     if ($('whTransferDate')) $('whTransferDate').value = getTodayDate();
     if ($('whAdjustDate')) $('whAdjustDate').value = getTodayDate();
     if ($('obDate')) $('obDate').value = getTodayDate();
+    if ($('empHireDate')) $('empHireDate').value = getTodayDate();
     if ($('headerCompanyName')) $('headerCompanyName').textContent = companyData.name || 'الميزان';
 
     initFirebase();
@@ -3483,5 +3626,5 @@ window.init = function() {
 document.addEventListener('DOMContentLoaded', function() {
     init();
     setInterval(updateClock, 1000);
-    console.log('✅ app.js v16.2.0 كامل');
+    console.log('✅ app.js v16.3.0 كامل');
 });
