@@ -30,10 +30,8 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 
 
 /* ═══════════════════════════════════════════════════════════
-   🔝 الهيدر - نسخة محسّنة (صفين: اللوجو فوق، والمعلومات تحته)
+   🔝 الهيدر - نسخة محسّنة (صفين)
    ═══════════════════════════════════════════════════════════ */
-
-/* الهيدر الرئيسي - عمودي */
 .top-header {
     display: flex !important;
     flex-direction: column !important;
@@ -50,7 +48,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     box-sizing: border-box !important;
 }
 
-/* ═══ الصف الأول: اللوجو + الاسم + أزرار القفل ═══ */
 .top-header .header-top {
     display: flex !important;
     align-items: center !important;
@@ -59,7 +56,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     width: 100% !important;
 }
 
-/* اللوجو */
 .top-header .logo-icon {
     flex-shrink: 0 !important;
     width: 42px !important;
@@ -73,11 +69,8 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     box-shadow: 0 4px 12px rgba(201, 169, 78, 0.3) !important;
 }
 
-.top-header .logo-icon i {
-    color: #0D0D0D !important;
-}
+.top-header .logo-icon i { color: #0D0D0D !important; }
 
-/* اسم التطبيق */
 .top-header .header-text {
     display: flex !important;
     flex-direction: column !important;
@@ -104,7 +97,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     text-overflow: ellipsis !important;
 }
 
-/* أزرار التحكم (الساعة + القفل) */
 .top-header .header-controls {
     display: flex !important;
     align-items: center !important;
@@ -112,7 +104,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     flex-shrink: 0 !important;
 }
 
-/* ═══ الصف الثاني: المستخدم + المزامنة ═══ */
 .top-header .header-info {
     display: flex !important;
     align-items: center !important;
@@ -123,7 +114,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     width: 100% !important;
 }
 
-/* الساعة */
 .top-header .clock {
     display: inline-flex !important;
     align-items: center !important;
@@ -143,7 +133,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* شارة المستخدم */
 .top-header .user-badge {
     display: inline-flex !important;
     align-items: center !important;
@@ -159,12 +148,8 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     white-space: nowrap !important;
 }
 
-.top-header .user-badge i {
-    font-size: 14px !important;
-    flex-shrink: 0 !important;
-}
+.top-header .user-badge i { font-size: 14px !important; flex-shrink: 0 !important; }
 
-/* زر القفل */
 .top-header .lock-btn {
     display: inline-flex !important;
     align-items: center !important;
@@ -189,7 +174,6 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     transform: scale(1.05) !important;
 }
 
-/* أزرار إضافية */
 #langToggleBtn,
 #themeToggleBtn,
 #manualSyncBtn,
@@ -214,31 +198,13 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 }
 
 #langToggleBtn:hover,
-#themeToggleBtn:hover {
-    background: #C9A94E !important;
-    color: #0D0D0D !important;
-}
+#themeToggleBtn:hover { background: #C9A94E !important; color: #0D0D0D !important; }
+#manualSyncBtn { border-color: #4A8AB5 !important; color: #4A8AB5 !important; }
+#manualSyncBtn:hover { background: #4A8AB5 !important; color: #fff !important; }
+#consoleFilterBtn { border-color: #9B59B6 !important; color: #9B59B6 !important; }
+#consoleFilterBtn:hover { background: #9B59B6 !important; color: #fff !important; }
 
-#manualSyncBtn {
-    border-color: #4A8AB5 !important;
-    color: #4A8AB5 !important;
-}
-
-#manualSyncBtn:hover {
-    background: #4A8AB5 !important;
-    color: #fff !important;
-}
-
-#consoleFilterBtn {
-    border-color: #9B59B6 !important;
-    color: #9B59B6 !important;
-}
-
-#consoleFilterBtn:hover {
-    background: #9B59B6 !important;
-    color: #fff !important;
-}
-
+/* ⚠️ إصلاح: إخفاء syncStatus عندما يكون فارغاً */
 #syncStatus {
     display: inline-flex !important;
     align-items: center !important;
@@ -258,200 +224,72 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     flex-shrink: 0 !important;
 }
 
+/* ⚠️ إصلاح: إخفاء المستطيل الفارغ */
+#syncStatus:empty {
+    display: none !important;
+}
+
 /* ═══ Responsive - شاشات صغيرة (أقل من 480px) ═══ */
 @media (max-width: 480px) {
-    .top-header {
-        padding: 10px 12px !important;
-        gap: 8px !important;
-    }
-    
-    .top-header .header-top {
-        gap: 8px !important;
-    }
-    
-    .top-header .logo-icon {
-        width: 36px !important;
-        height: 36px !important;
-        font-size: 18px !important;
-    }
-    
-    .top-header .header-text h1 {
-        font-size: 15px !important;
-    }
-    
-    .top-header .header-text .sub-title {
-        font-size: 9px !important;
-    }
-    
-    .top-header .clock {
-        font-size: 9px !important;
-        height: 28px !important;
-        padding: 0 6px !important;
-        letter-spacing: 0 !important;
-    }
-    
-    .top-header .user-badge {
-        font-size: 11px !important;
-        height: 28px !important;
-        padding: 0 8px !important;
-    }
-    
-    .top-header .user-badge i {
-        font-size: 13px !important;
-    }
-    
+    .top-header { padding: 10px 12px !important; gap: 8px !important; }
+    .top-header .header-top { gap: 8px !important; }
+    .top-header .logo-icon { width: 36px !important; height: 36px !important; font-size: 18px !important; }
+    .top-header .header-text h1 { font-size: 15px !important; }
+    .top-header .header-text .sub-title { font-size: 9px !important; }
+    .top-header .clock { font-size: 9px !important; height: 28px !important; padding: 0 6px !important; letter-spacing: 0 !important; }
+    .top-header .user-badge { font-size: 11px !important; height: 28px !important; padding: 0 8px !important; }
+    .top-header .user-badge i { font-size: 13px !important; }
     .top-header .lock-btn,
     #langToggleBtn,
     #themeToggleBtn,
     #manualSyncBtn,
-    #consoleFilterBtn {
-        width: 30px !important;
-        min-width: 30px !important;
-        height: 30px !important;
-        font-size: 12px !important;
-    }
+    #consoleFilterBtn { width: 30px !important; min-width: 30px !important; height: 30px !important; font-size: 12px !important; }
+    #syncStatus { height: 28px !important; font-size: 9px !important; max-width: 110px !important; padding: 0 8px !important; }
     
-    #syncStatus {
-        height: 28px !important;
-        font-size: 9px !important;
-        max-width: 110px !important;
-        padding: 0 8px !important;
-    }
+    /* ⚠️ إصلاح: إخفاء syncStatus الفارغ دائماً في الموبايل */
+    #syncStatus:empty,
+    #syncStatus { display: none !important; }
 }
 
-/* ═══ Responsive - موبايل صغير جداً (أقل من 400px) ═══ */
 @media (max-width: 400px) {
-    .top-header {
-        padding: 8px 10px !important;
-        gap: 6px !important;
-    }
-    
-    .top-header .logo-icon {
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 16px !important;
-    }
-    
-    .top-header .header-text h1 {
-        font-size: 14px !important;
-    }
-    
-    .top-header .header-text .sub-title {
-        display: none !important;
-    }
-    
-    .top-header .clock {
-        font-size: 8px !important;
-        height: 26px !important;
-        padding: 0 5px !important;
-        letter-spacing: -0.2px !important;
-    }
-    
-    .top-header .user-badge {
-        font-size: 10px !important;
-        height: 26px !important;
-        padding: 0 6px !important;
-    }
-    
+    .top-header { padding: 8px 10px !important; gap: 6px !important; }
+    .top-header .logo-icon { width: 32px !important; height: 32px !important; font-size: 16px !important; }
+    .top-header .header-text h1 { font-size: 14px !important; }
+    .top-header .header-text .sub-title { display: none !important; }
+    .top-header .clock { font-size: 8px !important; height: 26px !important; padding: 0 5px !important; letter-spacing: -0.2px !important; }
+    .top-header .user-badge { font-size: 10px !important; height: 26px !important; padding: 0 6px !important; }
     .top-header .lock-btn,
     #langToggleBtn,
     #themeToggleBtn,
     #manualSyncBtn,
-    #consoleFilterBtn {
-        width: 28px !important;
-        min-width: 28px !important;
-        height: 28px !important;
-        font-size: 11px !important;
-    }
-    
-    #syncStatus {
-        height: 26px !important;
-        font-size: 8px !important;
-        max-width: 90px !important;
-        padding: 0 6px !important;
-    }
+    #consoleFilterBtn { width: 28px !important; min-width: 28px !important; height: 28px !important; font-size: 11px !important; }
+    #syncStatus { height: 26px !important; font-size: 8px !important; max-width: 90px !important; padding: 0 6px !important; }
 }
 
-/* ═══ Responsive - تابلت (481-767px) ═══ */
 @media (min-width: 481px) and (max-width: 767px) {
-    .top-header .clock {
-        font-size: 12px !important;
-        height: 34px !important;
-        padding: 0 12px !important;
-    }
-    
-    .top-header .logo-icon {
-        width: 44px !important;
-        height: 44px !important;
-        font-size: 22px !important;
-    }
-    
-    .top-header .header-text h1 {
-        font-size: 18px !important;
-    }
-    
+    .top-header .clock { font-size: 12px !important; height: 34px !important; padding: 0 12px !important; }
+    .top-header .logo-icon { width: 44px !important; height: 44px !important; font-size: 22px !important; }
+    .top-header .header-text h1 { font-size: 18px !important; }
     .top-header .lock-btn,
     #langToggleBtn,
     #themeToggleBtn,
     #manualSyncBtn,
-    #consoleFilterBtn {
-        width: 34px !important;
-        min-width: 34px !important;
-        height: 34px !important;
-        font-size: 13px !important;
-    }
+    #consoleFilterBtn { width: 34px !important; min-width: 34px !important; height: 34px !important; font-size: 13px !important; }
 }
 
-/* ═══ Responsive - شاشات كبيرة (768px+) ═══ */
 @media (min-width: 768px) {
-    .top-header {
-        padding: 16px 20px !important;
-        gap: 14px !important;
-    }
-    
-    .top-header .logo-icon {
-        width: 50px !important;
-        height: 50px !important;
-        font-size: 26px !important;
-    }
-    
-    .top-header .header-text h1 {
-        font-size: 22px !important;
-    }
-    
-    .top-header .header-text .sub-title {
-        font-size: 13px !important;
-    }
-    
-    .top-header .clock {
-        font-size: 14px !important;
-        height: 38px !important;
-        padding: 0 16px !important;
-    }
-    
-    .top-header .user-badge {
-        height: 38px !important;
-        font-size: 13px !important;
-        padding: 0 14px !important;
-    }
-    
+    .top-header { padding: 16px 20px !important; gap: 14px !important; }
+    .top-header .logo-icon { width: 50px !important; height: 50px !important; font-size: 26px !important; }
+    .top-header .header-text h1 { font-size: 22px !important; }
+    .top-header .header-text .sub-title { font-size: 13px !important; }
+    .top-header .clock { font-size: 14px !important; height: 38px !important; padding: 0 16px !important; }
+    .top-header .user-badge { height: 38px !important; font-size: 13px !important; padding: 0 14px !important; }
     .top-header .lock-btn,
     #langToggleBtn,
     #themeToggleBtn,
     #manualSyncBtn,
-    #consoleFilterBtn {
-        width: 38px !important;
-        min-width: 38px !important;
-        height: 38px !important;
-        font-size: 15px !important;
-    }
-    
-    #syncStatus {
-        height: 38px !important;
-        font-size: 11px !important;
-        max-width: 160px !important;
-        padding: 0 14px !important;
-    }
+    #consoleFilterBtn { width: 38px !important; min-width: 38px !important; height: 38px !important; font-size: 15px !important; }
+    #syncStatus { height: 38px !important; font-size: 11px !important; max-width: 160px !important; padding: 0 14px !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -493,18 +331,42 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 .btn-sm { font-size: 11px; padding: 5px 10px; min-height: 30px; min-width: 30px; border-radius: 6px; }
 
 /* ═══════════════════════════════════════════════════════════
-   لوحة التحكم
+   ⚠️ لوحة التحكم - إصلاح الاتجاه والترتيب
    ═══════════════════════════════════════════════════════════ */
-.dashboard-stats { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; margin-bottom: 10px !important; }
-.dashboard-card { background: #0D0D0D !important; border-radius: 10px !important; padding: 10px 6px !important; text-align: center !important; border: 1px solid #2D2D2D !important; border-right: 3px solid #C9A94E !important; overflow: hidden !important; min-width: 0 !important; transition: 0.2s !important; }
+.dashboard-stats { 
+    display: grid !important; 
+    grid-template-columns: repeat(2, 1fr) !important; 
+    gap: 8px !important; 
+    margin-bottom: 10px !important; 
+    direction: rtl !important;
+}
+.dashboard-card { 
+    background: #0D0D0D !important; 
+    border-radius: 10px !important; 
+    padding: 12px 8px !important; 
+    text-align: center !important; 
+    border: 1px solid #2D2D2D !important; 
+    border-right: 3px solid #C9A94E !important; 
+    overflow: hidden !important; 
+    min-width: 0 !important; 
+    transition: 0.2s !important; 
+}
 .dashboard-card:hover { background: #1A1A1A !important; transform: translateY(-2px) !important; }
 .dashboard-card .number { font-size: 16px !important; font-weight: 900 !important; color: #C9A94E !important; margin-bottom: 3px !important; line-height: 1.2 !important; word-break: break-word !important; }
-.dashboard-card .label { font-size: 9px !important; color: #A89070 !important; font-weight: 700 !important; line-height: 1.2 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+.dashboard-card .label { font-size: 10px !important; color: #A89070 !important; font-weight: 700 !important; line-height: 1.2 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+
+/* ⚠️ إصلاح: تنسيق القيم السالبة */
+.dashboard-card .number.negative {
+    color: #E06060 !important;
+}
+.dashboard-card .number.positive {
+    color: #2D8F5E !important;
+}
 
 /* ═══════════════════════════════════════════════════════════
    ملخص الأداء
    ═══════════════════════════════════════════════════════════ */
-.performance-summary { background: linear-gradient(135deg, #0D0D0D, #1A1A1A); border-radius: 14px; padding: 14px; margin: 14px 0; border: 1px solid #2D2D2D; box-sizing: border-box; width: 100%; height: fit-content; align-self: flex-start; }
+.performance-summary { background: linear-gradient(135deg, #0D0D0D, #1A1A1A); border-radius: 14px; padding: 14px; margin: 14px 0; border: 1px solid #2D2D2D; box-sizing: border-box; width: 100%; }
 .perf-card { background: #0D0D0D; border-radius: 10px; padding: 12px; margin-bottom: 8px; border: 1px solid #2D2D2D; border-right: 4px solid #C9A94E; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; gap: 12px; }
 .perf-card:last-child { margin-bottom: 0; }
 .perf-card:hover { background: #151515; transform: translateX(-3px); box-shadow: 0 4px 12px rgba(201, 169, 78, 0.1); }
@@ -675,9 +537,7 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     min-height: 60px !important;
 }
 
-.bottom-nav.hidden {
-    display: flex !important;
-}
+.bottom-nav.hidden { display: flex !important; }
 
 .bottom-nav .nav-item { 
     display: flex !important; 
@@ -694,21 +554,9 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     font-family: inherit !important; 
 }
 
-.bottom-nav .nav-item i { 
-    font-size: 18px !important; 
-    margin-bottom: 3px !important; 
-    color: #5D5D5D !important; 
-}
-
-.bottom-nav .nav-item.active { 
-    color: #C9A94E !important; 
-    font-weight: 800 !important; 
-}
-
-.bottom-nav .nav-item.active i { 
-    color: #C9A94E !important; 
-    transform: translateY(-2px) !important; 
-}
+.bottom-nav .nav-item i { font-size: 18px !important; margin-bottom: 3px !important; color: #5D5D5D !important; }
+.bottom-nav .nav-item.active { color: #C9A94E !important; font-weight: 800 !important; }
+.bottom-nav .nav-item.active i { color: #C9A94E !important; transform: translateY(-2px) !important; }
 
 /* ═══════════════════════════════════════════════════════════
    قائمة المزيد
@@ -731,11 +579,7 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
 }
 
-#moreMenu > div {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
-}
+#moreMenu > div { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
 
 #moreMenu .more-item {
     display: flex !important;
@@ -757,16 +601,8 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     text-align: center !important;
 }
 
-#moreMenu .more-item:active {
-    transform: scale(0.95) !important;
-    background: #1A1A1A !important;
-    border-color: #C9A94E !important;
-}
-
-#moreMenu .more-item i {
-    font-size: 22px !important;
-    margin-bottom: 2px !important;
-}
+#moreMenu .more-item:active { transform: scale(0.95) !important; background: #1A1A1A !important; border-color: #C9A94E !important; }
+#moreMenu .more-item i { font-size: 22px !important; margin-bottom: 2px !important; }
 
 /* ═══════════════════════════════════════════════════════════
    Toast
@@ -840,17 +676,17 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
 .report-buttons-grid .btn span { white-space: nowrap !important; font-weight: 800 !important; }
 
 /* ═══════════════════════════════════════════════════════════
-   Responsive - موبايل
+   Responsive
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
     html { font-size: 13px; }
     body { padding: 8px 8px 100px; }
     .page-content { padding: 12px !important; }
     .page-content h2 { font-size: 18px !important; }
-    .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 5px !important; margin-bottom: 8px !important; }
-    .dashboard-card { padding: 8px 3px !important; border-radius: 8px !important; border-right-width: 2px !important; }
-    .dashboard-card .number { font-size: 13px !important; margin-bottom: 2px !important; }
-    .dashboard-card .label { font-size: 8px !important; letter-spacing: -0.3px !important; }
+    .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; margin-bottom: 8px !important; }
+    .dashboard-card { padding: 10px 6px !important; border-radius: 8px !important; border-right-width: 3px !important; }
+    .dashboard-card .number { font-size: 15px !important; margin-bottom: 2px !important; }
+    .dashboard-card .label { font-size: 9px !important; }
     .form-row { grid-template-columns: 1fr !important; }
     .form-card { padding: 12px !important; }
     .form-card h3 { font-size: 14px !important; }
@@ -887,14 +723,11 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     .perf-unit { font-size: 9px !important; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   موبايل صغير (أقل من 400px)
-   ═══════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
     .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
     .dashboard-card { padding: 10px 6px !important; }
-    .dashboard-card .number { font-size: 16px !important; }
-    .dashboard-card .label { font-size: 10px !important; }
+    .dashboard-card .number { font-size: 15px !important; }
+    .dashboard-card .label { font-size: 9px !important; }
     .report-buttons-grid { grid-template-columns: 1fr 1fr !important; }
     .report-buttons-grid .btn:last-child { grid-column: span 2 !important; }
     #moreMenu { width: 96% !important; padding: 10px !important; max-height: 75vh !important; }
@@ -906,38 +739,28 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     #accountList .table-row > span { display: flex !important; justify-content: space-between !important; padding: 4px 0 !important; border-bottom: 1px solid #1A1A1A !important; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   موبايل صغير جداً (أقل من 360px)
-   ═══════════════════════════════════════════════════════════ */
 @media (max-width: 360px) {
-    .top-header .clock { font-size: 7.5px !important; min-width: 100px !important; max-width: 110px !important; }
-    .top-header .header-text { max-width: 60px !important; }
+    .top-header .clock { font-size: 7.5px !important; }
     .top-header .header-text h1 { font-size: 12px !important; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   تابلت (481-767px)
-   ═══════════════════════════════════════════════════════════ */
 @media (min-width: 481px) and (max-width: 767px) {
-    .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
-    .dashboard-card { padding: 12px 8px !important; }
+    .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+    .dashboard-card { padding: 14px 10px !important; }
     .dashboard-card .number { font-size: 18px !important; }
-    .dashboard-card .label { font-size: 10px !important; }
+    .dashboard-card .label { font-size: 11px !important; }
     .report-buttons-grid { grid-template-columns: repeat(3, 1fr) !important; }
     #moreMenu > div { grid-template-columns: repeat(3, 1fr) !important; }
     .perf-value { font-size: 20px !important; }
     .perf-sub { font-size: 15px !important; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   كمبيوتر (768px+)
-   ═══════════════════════════════════════════════════════════ */
 @media (min-width: 768px) {
     body { padding: 20px 40px 100px !important; }
-    .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; margin-bottom: 16px !important; }
-    .dashboard-card { padding: 16px 12px !important; border-right-width: 4px !important; }
-    .dashboard-card .number { font-size: 22px !important; }
-    .dashboard-card .label { font-size: 12px !important; }
+    .dashboard-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; margin-bottom: 16px !important; }
+    .dashboard-card { padding: 18px 14px !important; border-right-width: 4px !important; }
+    .dashboard-card .number { font-size: 24px !important; }
+    .dashboard-card .label { font-size: 13px !important; }
     .form-row { grid-template-columns: 1fr 1fr !important; }
     #moreMenu { max-width: 520px !important; max-height: 80vh !important; }
     #moreMenu > div { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
@@ -954,12 +777,10 @@ body { background: #0D0D0D; color: #F5E6C8; padding: 10px 10px 100px; max-width:
     .perf-sub { font-size: 15px; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   شاشة كبيرة (1024px+)
-   ═══════════════════════════════════════════════════════════ */
 @media (min-width: 1024px) {
     body { max-width: 1200px; margin: 0 auto; }
     .page-content { padding: 24px !important; }
+    .dashboard-stats { grid-template-columns: repeat(4, 1fr) !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -996,6 +817,8 @@ body.light-mode .bottom-nav { background: #FFFFFF !important; border-color: #E0D
 body.light-mode #moreMenu .more-item { background: #F5F0E8 !important; color: #1A1A1A !important; border-color: #E0D5B8 !important; }
 body.light-mode .top-header .clock,
 body.light-mode .top-header .user-badge { background: #F5F0E8 !important; color: #B8953A !important; border-color: #C9A94E !important; }
+body.light-mode .dashboard-card .number { color: #B8953A !important; }
+body.light-mode .dashboard-card .label { color: #6A5A3A !important; }
 
 /* ═══════════════════════════════════════════════════════════
    الطباعة
