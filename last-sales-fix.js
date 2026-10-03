@@ -417,12 +417,18 @@
     }
 
     window.lastSaleFix = {
-        renderLastSales,
-        showSaleDetails,
-        buildPurchaseTotalsBox,
-        updatePurTotals,
-        init
-    };
+    renderLastSales,
+    showSaleDetails,
+    buildPurchaseTotalsBox,
+    updatePurTotals,
+    init
+};
+
+// ⚠️ التصدير المباشر لـ window (لأداة الفحص)
+window.renderLastSales = renderLastSales;
+window.showSaleDetails = showSaleDetails;
+window.buildPurchaseTotalsBox = buildPurchaseTotalsBox;
+window.updatePurTotals = updatePurTotals;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => setTimeout(init, 1500));
