@@ -1215,11 +1215,29 @@
     <script src="mobile-tools.js"></script>
     
     <!-- ═══════════════════════════════════════════════════
-         ملفات الإصلاح (التي كانت ناقصة)
+         ملفات الإصلاح
          ═══════════════════════════════════════════════════ -->
     <script src="last-sales-fix.js"></script>
     <script src="financial-cleaner.js"></script>
     <script src="full-reset.js"></script>
+    
+    <!-- ⚠️ تصدير الدوال إلى window لأداة الفحص -->
+    <script>
+    setTimeout(function() {
+        if (window.lastSaleFix) {
+            if (window.lastSaleFix.renderLastSales) {
+                window.renderLastSales = window.lastSaleFix.renderLastSales;
+            }
+            if (window.lastSaleFix.showSaleDetails) {
+                window.showSaleDetails = window.lastSaleFix.showSaleDetails;
+            }
+            if (window.lastSaleFix.updatePurTotals) {
+                window.updatePurTotals = window.lastSaleFix.updatePurTotals;
+            }
+            console.log('✅ تم تصدير دوال lastSaleFix إلى window');
+        }
+    }, 2000);
+    </script>
         
     <script>
     if ('serviceWorker' in navigator) {
