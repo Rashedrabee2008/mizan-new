@@ -1220,6 +1220,25 @@
     <script src="last-sales-fix.js"></script>
     <script src="financial-cleaner.js"></script>
     <script src="full-reset.js"></script>
+
+
+<!-- ⚠️ إصلاح بطاقات لوحة التحكم -->
+<script>
+setTimeout(function() {
+    if (window.Accounting && window.Accounting.UI && window.Accounting.UI.updateDashboard) {
+        window.updateDashboard = function() {
+            try {
+                window.Accounting.UI.updateDashboard();
+                console.log('✅ تم تحديث اللوحة بالمحرك المحاسبي');
+            } catch(e) {
+                console.error('❌ خطأ:', e);
+            }
+        };
+        console.log('✅ تم ربط updateDashboard بالمحرك المحاسبي');
+        setTimeout(window.updateDashboard, 500);
+    }
+}, 2500);
+</script>
     
     <!-- ⚠️ تصدير الدوال إلى window لأداة الفحص -->
     <script>
