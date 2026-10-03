@@ -1,5 +1,5 @@
 /* ============================================================
-   last-sales-fix.js — إصلاح آخر المبيعات + تحسين المشتريات
+   last-sales-fix.js — إصلاح آخر المبيعات + إجماليات المشتريات
    الإصدار: 1.0
    ============================================================ */
 
@@ -44,7 +44,7 @@
     };
 
     /* ═══════════════════════════════════════════════════════════
-       الجزء 2: عرض "آخر المبيعات" في لوحة التحكم
+       الجزء 2: عرض "آخر المبيعات"
        ═══════════════════════════════════════════════════════════ */
     
     function renderLastSales() {
@@ -54,10 +54,8 @@
             return;
         }
 
-        // جلب المبيعات
         const sales = Utils.read('sales', []);
         
-        // إذا لا توجد مبيعات
         if (!sales.length) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -68,37 +66,25 @@
             return;
         }
 
-        // ترتيب تنازلي حسب التاريخ (الأحدث أولاً)
         const sorted = [...sales].sort((a, b) => {
             const dateA = new Date(a.date || a.createdAt || 0).getTime();
             const dateB = new Date(b.date || b.createdAt || 0).getTime();
             return dateB - dateA;
         });
 
-        // خذ آخر 5 فواتير
         const recent = sorted.slice(0, 5);
 
-        // بناء القائمة
         const html = recent.map((sale, index) => {
             const total = Utils.num(sale.total, 0);
             const date = sale.date ? new Date(sale.date) : new Date();
             const dateStr = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
             const timeStr = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-            
-            // رقم الفاتورة
             const invNum = sale.invoiceNumber || sale.id || `#${index + 1}`;
-            
-            // العميل
             const customer = sale.customerName || sale.customer || 'عميل نقدي';
             
-            // طريقة الدفع
             const payIcons = {
-                cash: '💵',
-                credit: '📝',
-                wallet: '📱',
-                visa: '💳',
-                bank: '🏦',
-                installment: '📅'
+                cash: '💵', credit: '📝', wallet: '📱',
+                visa: '💳', bank: '🏦', installment: '📅'
             };
             const payIcon = payIcons[sale.paymentMethod] || '💵';
 
@@ -126,7 +112,7 @@
     }
 
     /* ═══════════════════════════════════════════════════════════
-       الجزء 3: عرض تفاصيل فاتورة (Modal)
+       الجزء 3: عرض تفاصيل فاتورة
        ═══════════════════════════════════════════════════════════ */
     
     function showSaleDetails(saleId) {
@@ -172,6 +158,7 @@
                     ${sale.seller ? `<div><strong>البائع:</strong> ${Utils.escape(sale.seller)}</div>` : ''}
                 </div>
 
+                ${items.length > 0 ? `
                 <div class="sale-detail-items">
                     <div class="sale-detail-items-header">
                         <span>#</span>
@@ -179,8 +166,9 @@
                         <span>الكمية × السعر</span>
                         <span>الإجمالي</span>
                     </div>
-                    ${itemsHtml || '<div class="empty-items"><span>لا توجد أصناف</span></div>'}
+                    ${itemsHtml}
                 </div>
+                ` : ''}
 
                 <div class="sale-detail-totals">
                     <div><span>المجموع:</span><strong>${Utils.format(sale.subtotal || sale.total)}</strong></div>
@@ -199,28 +187,24 @@
     }
 
     /* ═══════════════════════════════════════════════════════════
-       الجزء 4: بناء صندوق إجماليات المشتريات (مثل الكاشير)
+       الجزء 4: بناء صندوق إجماليات المشتريات
        ═══════════════════════════════════════════════════════════ */
     
     function buildPurchaseTotalsBox() {
-        // ابحث عن الصفحة
         const purchasesPage = document.getElementById('page-purchases');
         if (!purchasesPage) return;
 
-        // ابحث عن صندوق الإجماليات القديم
-        const oldTotalsBox = document.getElementById('purTotalBox');
-        if (oldTotalsBox) {
-            oldTotalsBox.remove();
-        }
+        // احذف الصندوق القديم
+        const oldBox = document.getElementById('purTotalBox');
+        if (oldBox) oldBox.remove();
 
-        // أضف صندوق جديد بنفس تصميم الكاشير
-        const newTotalsBox = document.createElement('div');
-        newTotalsBox.id = 'purTotalBox';
-        newTotalsBox.className = 'pos-totals-box';
-        newTotalsBox.style.display = 'none';
+        // أنشئ صندوق جديد
+        const newBox = document.createElement('div');
+        newBox.id = 'purTotalBox';
+        newBox.className = 'pos-totals-box';
+        newBox.style.display = 'none';
 
-        newTotalsBox.innerHTML = `
-            <!-- شبكة الإحصائيات -->
+        newBox.innerHTML = `
             <div class="pos-totals-grid">
                 <div class="pos-total-stat">
                     <div class="pos-total-label">عدد</div>
@@ -240,7 +224,6 @@
                 </div>
             </div>
 
-            <!-- الخصومات -->
             <div class="pos-discount-grid">
                 <div class="pos-field">
                     <label>💸 الخصم</label>
@@ -264,7 +247,6 @@
                 </div>
             </div>
 
-            <!-- الشحن/التوصيل -->
             <div class="pos-delivery-row">
                 <div class="pos-delivery-item">
                     <label>🚚 مندوب التوصيل</label>
@@ -280,13 +262,11 @@
                 </div>
             </div>
 
-            <!-- الإجمالي النهائي -->
             <div class="pos-grand-total" style="background:linear-gradient(135deg,#E06060,#C04040);">
                 <span>الإجمالي النهائي</span>
                 <strong id="purTotal">0.00 ج.م</strong>
             </div>
 
-            <!-- الأزرار -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;">
                 <button class="btn btn-primary" onclick="savePurchase()">
                     <i class="fas fa-check"></i> حفظ
@@ -297,21 +277,17 @@
             </div>
         `;
 
-        // أضف الصندوق قبل حقل السجل
-        const historyHeader = purchasesPage.querySelector('h2');
-        const h2Elements = purchasesPage.querySelectorAll('h2');
+        // أضف قبل "السجل"
+        const h2s = purchasesPage.querySelectorAll('h2');
         let historyElement = null;
-        
-        h2Elements.forEach(h2 => {
-            if (h2.textContent.includes('السجل')) {
-                historyElement = h2;
-            }
+        h2s.forEach(h2 => {
+            if (h2.textContent.includes('السجل')) historyElement = h2;
         });
 
         if (historyElement) {
-            historyElement.parentNode.insertBefore(newTotalsBox, historyElement);
+            historyElement.parentNode.insertBefore(newBox, historyElement);
         } else {
-            purchasesPage.querySelector('.page-content').appendChild(newTotalsBox);
+            purchasesPage.querySelector('.page-content').appendChild(newBox);
         }
 
         console.log('✅ تم بناء صندوق إجماليات المشتريات');
@@ -322,60 +298,42 @@
        ═══════════════════════════════════════════════════════════ */
     
     function updatePurTotals() {
-        // جلب الأصناف من متغير عام أو من الصفحة
         let items = window.purchaseItems || [];
         
-        // إذا لم توجد، حاول قراءتها من الجدول
         if (!items.length) {
-            const rows = document.querySelectorAll('#purItemsContainer .item-row, #purItemsContainer tr');
-            rows.forEach((row, i) => {
-                // حاول استخراج القيم من الصف
+            const rows = document.querySelectorAll('#purItemsContainer .item-row');
+            rows.forEach(row => {
+                const name = row.querySelector('.item-name')?.textContent || '';
+                const qty = Utils.num(row.querySelector('.item-qty')?.textContent, 0);
+                const price = Utils.num(row.querySelector('.item-price')?.textContent, 0);
+                if (name && qty > 0) items.push({ name, qty, price });
             });
+            window.purchaseItems = items;
         }
 
+        const box = document.getElementById('purTotalBox');
         if (!items.length) {
-            const box = document.getElementById('purTotalBox');
             if (box) box.style.display = 'none';
             return;
         }
 
-        // إظهار الصندوق
-        const box = document.getElementById('purTotalBox');
         if (box) box.style.display = 'block';
 
-        // حساب المجموع
-        const subtotal = items.reduce((sum, item) => {
-            const qty = Utils.num(item.qty, 0);
-            const price = Utils.num(item.price, 0);
-            return sum + (qty * price);
-        }, 0);
-
+        const subtotal = items.reduce((sum, item) => 
+            sum + (Utils.num(item.qty, 0) * Utils.num(item.price, 0)), 0);
         const totalQty = items.reduce((sum, i) => sum + Utils.num(i.qty, 0), 0);
 
-        // حساب الخصم
         const discountValue = Utils.num(document.getElementById('purDiscount')?.value, 0);
         const discountType = document.getElementById('purDiscountType')?.value || 'fixed';
-        const discountAmount = discountType === 'percent' 
-            ? subtotal * (discountValue / 100) 
-            : discountValue;
+        const discountAmount = discountType === 'percent' ? subtotal * (discountValue / 100) : discountValue;
 
-        // خصم إضافي
         const extraValue = Utils.num(document.getElementById('purExtraDiscount')?.value, 0);
         const extraType = document.getElementById('purExtraDiscountType')?.value || 'fixed';
-        const extraAmount = extraType === 'percent' 
-            ? subtotal * (extraValue / 100) 
-            : extraValue;
+        const extraAmount = extraType === 'percent' ? subtotal * (extraValue / 100) : extraValue;
 
-        // المجموع بعد الخصومات
         const afterDiscount = Math.max(0, subtotal - discountAmount - extraAmount);
+        const total = afterDiscount;
 
-        // الضريبة (لا توجد ضريبة على المشتريات عادة - يمكن تعديلها)
-        const vat = 0;
-
-        // الإجمالي النهائي
-        const total = afterDiscount + vat;
-
-        // تحديث العناصر
         const update = (id, value) => {
             const el = document.getElementById(id);
             if (el) el.textContent = Utils.format(value);
@@ -384,80 +342,60 @@
         update('purStatItemsCount', items.length);
         update('purStatTotalQty', totalQty);
         update('purSubtotal', subtotal);
-        update('purVAT', vat);
+        update('purVAT', 0);
         
         const totalEl = document.getElementById('purTotal');
-        if (totalEl) {
-            totalEl.textContent = `${Utils.format(total)} ج.م`;
-        }
+        if (totalEl) totalEl.textContent = `${Utils.format(total)} ج.م`;
     }
 
     /* ═══════════════════════════════════════════════════════════
-       الجزء 6: ربط الأصناف المُضافة حديثاً
+       الجزء 6: ربط addPurItem
        ═══════════════════════════════════════════════════════════ */
     
     function interceptAddPurItem() {
-        const originalAdd = window.addPurItem;
-        if (typeof originalAdd !== 'function') {
-            console.warn('⚠️ addPurItem غير موجودة');
-            return;
-        }
+        const original = window.addPurItem;
+        if (typeof original !== 'function') return;
 
         window.addPurItem = function() {
-            const result = originalAdd.apply(this, arguments);
-            
-            // بعد الإضافة، حدّث الإجماليات
+            const result = original.apply(this, arguments);
             setTimeout(() => {
-                // حاول قراءة الأصناف من الجدول
                 const rows = document.querySelectorAll('#purItemsContainer .item-row');
                 const items = [];
-                
                 rows.forEach(row => {
                     const name = row.querySelector('.item-name')?.textContent || '';
                     const qty = Utils.num(row.querySelector('.item-qty')?.textContent, 0);
                     const price = Utils.num(row.querySelector('.item-price')?.textContent, 0);
-                    
-                    if (name && qty > 0) {
-                        items.push({ name, qty, price });
-                    }
+                    if (name && qty > 0) items.push({ name, qty, price });
                 });
-                
                 window.purchaseItems = items;
                 updatePurTotals();
             }, 100);
-
             return result;
         };
     }
 
     /* ═══════════════════════════════════════════════════════════
-       الجزء 7: تحديث تلقائي عند فتح صفحة المشتريات
+       الجزء 7: مراقبة التنقل
        ═══════════════════════════════════════════════════════════ */
     
-    function watchPurchasesPage() {
-        // راقب تغيير الصفحة
-        const originalNavigate = window.navigateTo;
-        if (typeof originalNavigate === 'function') {
-            window.navigateTo = function(page) {
-                originalNavigate(page);
-                
-                if (page === 'purchases') {
-                    setTimeout(() => {
-                        buildPurchaseTotalsBox();
-                        updatePurTotals();
-                    }, 300);
-                }
-                
-                if (page === 'dashboard') {
-                    setTimeout(renderLastSales, 300);
-                }
-            };
-        }
+    function watchNavigation() {
+        const original = window.navigateTo;
+        if (typeof original !== 'function') return;
 
-        // إذا كانت الصفحة مفتوحة بالفعل
-        if (document.getElementById('page-purchases')?.classList.contains('active')) {
-            setTimeout(buildPurchaseTotalsBox, 500);
-        }
+        window.navigateTo = function(page) {
+            original(page);
+            
+            if (page === 'purchases') {
+                setTimeout(() => {
+                    buildPurchaseTotalsBox();
+                    updatePurTotals();
+                }, 300);
+            }
+            
+            if (page === 'dashboard') {
+                setTimeout(renderLastSales, 300);
+            }
+        };
     }
 
     /* ═══════════════════════════════════════════════════════════
@@ -466,28 +404,18 @@
     
     function init() {
         console.log('🚀 تشغيل الإصلاحات...');
-
-        // عرض آخر المبيعات
         renderLastSales();
-
-        // بناء صندوق المشتريات
         buildPurchaseTotalsBox();
-
-        // ربط الدوال
         interceptAddPurItem();
-        watchPurchasesPage();
-
-        // تحديث آخر المبيعات كل 10 ثواني (إذا كانت الصفحة الرئيسية مفتوحة)
+        watchNavigation();
+        
         setInterval(() => {
             if (document.getElementById('page-dashboard')?.classList.contains('active')) {
                 renderLastSales();
             }
         }, 10000);
-
-        console.log('✅ الإصلاحات جاهزة');
     }
 
-    // التصدير
     window.lastSaleFix = {
         renderLastSales,
         showSaleDetails,
@@ -496,14 +424,12 @@
         init
     };
 
-    // التشغيل
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => setTimeout(init, 1500));
     } else {
         setTimeout(init, 1500);
     }
 
-    // إعادة التشغيل بعد 3 ثواني
     setTimeout(init, 3000);
 
     console.log('✅ last-sales-fix.js جاهز');
